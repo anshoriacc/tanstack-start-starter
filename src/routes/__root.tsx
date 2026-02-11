@@ -1,53 +1,129 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import {
+  HeadContent,
+  Scripts,
+  createRootRouteWithContext,
+  Outlet,
+} from '@tanstack/react-router'
 import { TanStackDevtools } from '@tanstack/react-devtools'
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { type QueryClient } from '@tanstack/react-query'
 
+import { getThemeServerFn, resolveTheme } from '@/server/theme'
+import { Providers } from '@/components/providers'
+import { NotFound } from '@/components/not-found'
+import {
+  generateThemeScript,
+  ThemeDetectionScript,
+} from '@/components/inline-scripts'
 import appCss from '../styles.css?url'
 
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      {
-        charSet: 'utf-8',
-      },
-      {
-        name: 'viewport',
-        content: 'width=device-width, initial-scale=1',
-      },
-      {
-        title: 'TanStack Start Starter',
-      },
-    ],
-    links: [
-      {
-        rel: 'stylesheet',
-        href: appCss,
-      },
-    ],
-  }),
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
+  {
+    loader: async () => {
+      const theme = await getThemeServerFn()
 
-  shellComponent: RootDocument,
-})
+      // On server, resolve theme immediately
+      // On client, we can't access headers, so we'll rely on the inline script
+      let resolvedTheme: 'light' | 'dark'
 
-function RootDocument({ children }: { children: React.ReactNode }) {
+      if (typeof window === 'undefined') {
+        // Server-side: check Accept-CH header or default to light
+        // Since we can't detect system preference on server without client hints,
+        // we default to light for SSR and let the client script correct it immediately
+        resolvedTheme = resolveTheme(theme, false)
+      } else {
+        // Client-side during navigation: use matchMedia
+        const prefersDark = window.matchMedia(
+          '(prefers-color-scheme: dark)',
+        ).matches
+        resolvedTheme = resolveTheme(theme, prefersDark)
+      }
+
+      return { theme, resolvedTheme }
+    },
+    head: ({ loaderData }) => {
+      const resolvedTheme = loaderData?.resolvedTheme ?? 'light'
+
+      return {
+        meta: [
+          {
+            charSet: 'utf-8',
+          },
+          {
+            name: 'viewport',
+            content: 'width=device-width, initial-scale=1',
+          },
+          {
+            title: 'TanStack Start Starter',
+          },
+        ],
+        links: [
+          {
+            rel: 'stylesheet',
+            href: appCss,
+          },
+          { rel: 'icon', href: '/logo192.png' },
+          { rel: 'apple-touch-icon', href: '/logo192.png' },
+        ],
+        scripts: [
+          {
+            type: 'text/javascript',
+            children: generateThemeScript(resolvedTheme),
+          },
+        ],
+      }
+    },
+    component: RootComponent,
+    notFoundComponent: () => <NotFound />,
+  },
+)
+
+function RootComponent() {
+  const { theme, resolvedTheme } = Route.useLoaderData()
+
   return (
-    <html lang="en">
+    <RootDocument>
+      <Providers theme={theme} resolvedTheme={resolvedTheme}>
+        <Outlet />
+      </Providers>
+    </RootDocument>
+  )
+}
+
+interface RootDocumentProps {
+  children: React.ReactNode
+}
+
+function RootDocument({ children }: RootDocumentProps) {
+  return (
+    <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
       </head>
+
       <body>
         {children}
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-          ]}
-        />
+
+        {process.env.NODE_ENV === 'development' ? (
+          <>
+            <TanStackDevtools
+              config={{
+                position: 'bottom-right',
+              }}
+              plugins={[
+                {
+                  name: 'Tanstack Router',
+                  render: <TanStackRouterDevtoolsPanel />,
+                },
+              ]}
+            />
+
+            <ReactQueryDevtools buttonPosition="bottom-left" />
+          </>
+        ) : null}
+
+        <ThemeDetectionScript />
         <Scripts />
       </body>
     </html>
