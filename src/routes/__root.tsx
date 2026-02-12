@@ -2,21 +2,20 @@ import {
   HeadContent,
   Scripts,
   createRootRouteWithContext,
-  Outlet,
 } from '@tanstack/react-router'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { type QueryClient } from '@tanstack/react-query'
+import appCss from '../styles.css?url'
+import type { QueryClient } from '@tanstack/react-query'
 
 import { getThemeServerFn, resolveTheme } from '@/server/theme'
 import { Providers } from '@/components/providers'
 import { NotFound } from '@/components/not-found'
 import {
-  generateThemeScript,
   ThemeDetectionScript,
+  generateThemeScript,
 } from '@/components/inline-scripts'
-import appCss from '../styles.css?url'
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
@@ -74,28 +73,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         ],
       }
     },
-    component: RootComponent,
+    shellComponent: RootDocument,
     notFoundComponent: () => <NotFound />,
   },
 )
-
-function RootComponent() {
-  const { theme, resolvedTheme } = Route.useLoaderData()
-
-  return (
-    <RootDocument>
-      <Providers theme={theme} resolvedTheme={resolvedTheme}>
-        <Outlet />
-      </Providers>
-    </RootDocument>
-  )
-}
 
 interface RootDocumentProps {
   children: React.ReactNode
 }
 
 function RootDocument({ children }: RootDocumentProps) {
+  const { theme, resolvedTheme } = Route.useLoaderData()
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -103,7 +92,9 @@ function RootDocument({ children }: RootDocumentProps) {
       </head>
 
       <body>
-        {children}
+        <Providers theme={theme} resolvedTheme={resolvedTheme}>
+          {children}
+        </Providers>
 
         {process.env.NODE_ENV === 'development' ? (
           <>
