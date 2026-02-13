@@ -18,6 +18,18 @@ export async function postLoginForm(payload) {
 export const customCredentials = () => {
   return {
     id: 'custom-credentials',
+    schema: {
+      session: {
+        fields: {
+          accessToken: {
+            type: 'string',
+          },
+          username: {
+            type: 'string',
+          },
+        },
+      },
+    },
     endpoints: {
       signInCredentials: createAuthEndpoint(
         '/sign-in/credentials',
@@ -32,17 +44,17 @@ export const customCredentials = () => {
             return ctx.json({ error: 'No access token' }, { status: 400 })
 
           const user = { ...res }
-          const session = await ctx.context.internalAdapter.createSession(
+          const session = (await ctx.context.internalAdapter.createSession(
             user.id,
             false,
             {
               accessToken: accessToken,
-              email: username,
+              username: username,
               userId: user.id,
             },
-          )
+          ))
 
-          session.accessToken = accessToken
+          // session.accessToken = accessToken
           console.log('user::', user)
           console.log('session::', session)
 
