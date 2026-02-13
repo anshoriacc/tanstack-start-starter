@@ -6,7 +6,6 @@ import {
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import appCss from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
 
 import { getThemeServerFn, resolveTheme } from '@/server/theme'
@@ -16,6 +15,7 @@ import {
   ThemeDetectionScript,
   generateThemeScript,
 } from '@/components/inline-scripts'
+import appCss from '../styles.css?url'
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {

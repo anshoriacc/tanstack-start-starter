@@ -1,12 +1,17 @@
-import { auth } from '@/lib/auth/server'
 import { createServerFn } from '@tanstack/react-start'
-import { getCookie } from '@tanstack/react-start/server'
+import { auth } from '@/lib/auth/server'
+import { refreshTokenBodySchema, signInBodySchema } from '@/schema/auth'
 
-export const login = createServerFn().handler(async ({ data }) => {
-  return await auth.api.signInCredentials({ body: data })
-})
+export const loginFn = createServerFn()
+  .inputValidator(signInBodySchema)
+  .handler(async ({ data }) => {
+    const res = await auth.api.signInCredentials({ body: data })
+    return res
+  })
 
-export const getServerSession = createServerFn().handler(() => {
-  const cookie = getCookie('better-auth.session_data')
-  return cookie
-})
+export const refreshTokenFn = createServerFn()
+  .inputValidator(refreshTokenBodySchema)
+  .handler(async ({ data }) => {
+    const res = await auth.api.refreshToken({ body: data })
+    return res
+  })

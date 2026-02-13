@@ -1,11 +1,8 @@
-import { createFileRoute, useNavigate, redirect } from '@tanstack/react-router'
-import { getCookie } from '@tanstack/react-start/server'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from '@tanstack/react-form'
-import { z } from 'zod'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import {
   Card,
   CardContent,
@@ -13,69 +10,57 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-// import { authClient, notifySessionChange } from '@/lib/auth/client'
-import { getAccessTokenCookie } from '@/server/cookie'
-import { login } from '@/server/auth'
+import { signInBodySchema } from '@/schema/auth'
+import { useLoginMutation } from '@/hooks/api/auth'
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from '@/components/ui/field'
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@/components/ui/input-group'
+import { IconEye, IconEyeOff } from '@tabler/icons-react'
 
 export const Route = createFileRoute('/_auth/login')({
-  beforeLoad: async () => {
-    const accessToken = await getAccessTokenCookie()
-
-    if (accessToken) {
-      throw redirect({
-        to: '/dashboard',
-      })
-    }
-  },
   component: LoginPage,
 })
 
-const loginSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
-  password: z.string().min(1, 'Password is required'),
-})
-
-type LoginFormData = z.infer<typeof loginSchema>
-
 function LoginPage() {
   const navigate = useNavigate()
-  const [serverError, setServerError] = useState<string | null>(null)
+  const [showPassword, setShowPassword] = useState<boolean>(false)
+
+  const loginMutation = useLoginMutation()
 
   const form = useForm({
     defaultValues: {
       username: '',
       password: '',
-    } as LoginFormData,
+    },
     validators: {
-      onChange: loginSchema,
+      onSubmit: signInBodySchema,
     },
     onSubmit: async ({ value }) => {
-      setServerError(null)
-
-      // const result = await authClient.signIn.dummy({
-      //   username: value.username,
-      //   password: value.password,
-      // })
-      const result = await login({ data: value })
-      console.log(result)
-
-      if (result.error) {
-        setServerError(result.error.message)
-        return
-      }
-
-      // if (result.data) {
-      //   notifySessionChange()
-      //   navigate({ to: '/dashboard' })
-      // }
+      loginMutation.mutate(value, {
+        onSuccess: () => {
+          navigate({ to: '/dashboard', replace: true })
+        },
+        onError: (err) => {
+          console.error(err)
+        },
+      })
     },
   })
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <main className="flex flex-col min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-sm">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">Login</CardTitle>
+        <CardHeader>
+          <CardTitle>Login</CardTitle>
           <CardDescription>
             Enter your credentials to access your account
           </CardDescription>
@@ -87,88 +72,98 @@ function LoginPage() {
               e.stopPropagation()
               form.handleSubmit()
             }}
-            className="space-y-4"
           >
-            <form.Field
-              name="username"
-              children={(field) => (
-                <div className="space-y-2">
-                  <Label htmlFor={field.name}>Username</Label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="text"
-                    placeholder="Enter your username"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    onBlur={field.handleBlur}
-                    data-error={field.state.meta.errors.length > 0}
-                  />
-                  {field.state.meta.errors.length > 0 && (
-                    <p className="text-destructive text-sm">
-                      {field.state.meta.errors
-                        .map((err) => String(err))
-                        .join(', ')}
-                    </p>
-                  )}
+            <FieldGroup>
+              <form.Field name="username">
+                {(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid
+
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Username</FieldLabel>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        type="text"
+                        value={field.state.value}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        onBlur={field.handleBlur}
+                        aria-invalid={isInvalid}
+                        placeholder="Enter your username"
+                      />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  )
+                }}
+              </form.Field>
+
+              <form.Field name="password">
+                {(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid
+
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                      <InputGroup>
+                        <InputGroupInput
+                          id={field.name}
+                          name={field.name}
+                          type={showPassword ? 'text' : 'password'}
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          onBlur={field.handleBlur}
+                          aria-invalid={isInvalid}
+                          placeholder="Enter your password"
+                        />
+                        <InputGroupAddon align="inline-end">
+                          <InputGroupButton
+                            size="icon-sm"
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            tabIndex={-1}
+                          >
+                            {showPassword ? <IconEyeOff /> : <IconEye />}
+                          </InputGroupButton>
+                        </InputGroupAddon>
+                      </InputGroup>
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  )
+                }}
+              </form.Field>
+
+              {loginMutation.isError && (
+                <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                  {'error' in loginMutation.error &&
+                    typeof loginMutation.error.error === 'string' &&
+                    loginMutation.error.error}
                 </div>
               )}
-            />
 
-            <form.Field
-              name="password"
-              children={(field) => (
-                <div className="space-y-2">
-                  <Label htmlFor={field.name}>Password</Label>
-                  <Input
-                    id={field.name}
-                    name={field.name}
-                    type="password"
-                    placeholder="Enter your password"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    onBlur={field.handleBlur}
-                    data-error={field.state.meta.errors.length > 0}
-                  />
-                  {field.state.meta.errors.length > 0 && (
-                    <p className="text-destructive text-sm">
-                      {field.state.meta.errors
-                        .map((err) => String(err))
-                        .join(', ')}
-                    </p>
-                  )}
-                </div>
-              )}
-            />
-
-            {serverError && (
-              <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                {serverError}
-              </div>
-            )}
-
-            <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={!canSubmit || isSubmitting}
-                >
-                  {isSubmitting ? 'Signing in...' : 'Sign in'}
-                </Button>
-              )}
-            />
+              <form.Subscribe
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+                children={([_, isSubmitting]) => (
+                  <Button
+                    type="submit"
+                    className="w-full"
+                    disabled={isSubmitting || loginMutation.isPending}
+                  >
+                    {isSubmitting || loginMutation.isPending
+                      ? 'Signing in...'
+                      : 'Sign in'}
+                  </Button>
+                )}
+              />
+            </FieldGroup>
           </form>
-
-          <div className="mt-4 text-center text-sm text-muted-foreground">
-            <p>Try these demo credentials:</p>
-            <p className="font-medium">
-              Username: emilys | Password: emilyspass
-            </p>
-          </div>
         </CardContent>
       </Card>
-    </div>
+    </main>
   )
 }
