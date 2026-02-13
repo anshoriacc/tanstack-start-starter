@@ -13,8 +13,9 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { authClient, notifySessionChange } from '@/lib/auth-client'
+// import { authClient, notifySessionChange } from '@/lib/auth/client'
 import { getAccessTokenCookie } from '@/server/cookie'
+import { login } from '@/server/auth'
 
 export const Route = createFileRoute('/_auth/login')({
   beforeLoad: async () => {
@@ -51,20 +52,22 @@ function LoginPage() {
     onSubmit: async ({ value }) => {
       setServerError(null)
 
-      const result = await authClient.signIn.dummy({
-        username: value.username,
-        password: value.password,
-      })
+      // const result = await authClient.signIn.dummy({
+      //   username: value.username,
+      //   password: value.password,
+      // })
+      const result = await login({ data: value })
+      console.log(result)
 
       if (result.error) {
         setServerError(result.error.message)
         return
       }
 
-      if (result.data) {
-        notifySessionChange()
-        navigate({ to: '/dashboard' })
-      }
+      // if (result.data) {
+      //   notifySessionChange()
+      //   navigate({ to: '/dashboard' })
+      // }
     },
   })
 

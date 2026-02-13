@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { authClient } from './auth-client'
+import { authClient } from './auth/client'
 
 /**
  * API client for authenticated requests.
