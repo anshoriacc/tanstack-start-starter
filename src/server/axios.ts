@@ -1,10 +1,10 @@
 import { createServerFn } from '@tanstack/react-start'
+import { getRequest } from '@tanstack/react-start/server'
 import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios'
 import { z } from 'zod'
 
 import { auth } from '@/lib/auth/server'
 import { BACKEND_URL } from '@/constants/env'
-import { getRequestHeaders } from '@tanstack/react-start/server'
 
 const serverAxiosInstance = axios.create({
   baseURL: BACKEND_URL,
@@ -17,28 +17,29 @@ export interface SerializableAxiosResponse {
   headers: Record<string, string>
 }
 
-async function getSessionWithToken(): Promise<{
-  accessToken: string
-  refreshToken: string
-} | null> {
-  try {
-    const headers = getRequestHeaders()
-    const session = await auth.api.getSession({
-      headers: headers as unknown as Headers,
-    })
+export const getSessionWithToken = createServerFn({ method: 'GET' }).handler(
+  async () => {
+    const request = getRequest()
+    const headers = request?.headers ?? new Headers()
 
-    if (!session?.session) return null
+    try {
+      const session = await auth.api.getSession({
+        headers,
+      })
 
-    return {
-      accessToken: (session.session as unknown as Record<string, string>)
-        .accessToken,
-      refreshToken: (session.session as unknown as Record<string, string>)
-        .refreshToken,
+      if (!session?.session) return null
+
+      return {
+        accessToken: (session.session as unknown as Record<string, string>)
+          .accessToken,
+        refreshToken: (session.session as unknown as Record<string, string>)
+          .refreshToken,
+      }
+    } catch {
+      return null
     }
-  } catch {
-    return null
-  }
-}
+  },
+)
 
 function serializeResponse(response: AxiosResponse): SerializableAxiosResponse {
   const headers: Record<string, string> = {}
@@ -63,7 +64,6 @@ async function makeRequest(
   config: AxiosRequestConfig,
 ): Promise<SerializableAxiosResponse> {
   const tokens = await getSessionWithToken()
-  console.log('tokens::', tokens)
 
   const requestConfig: AxiosRequestConfig = {
     ...config,
@@ -77,6 +77,8 @@ async function makeRequest(
 
   try {
     const response = await serverAxiosInstance.request(requestConfig)
+    console.log('response::', response)
+    console.log('serializeResponse(response)::', serializeResponse(response))
     return serializeResponse(response)
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
@@ -143,18 +145,20 @@ export const serverAxios = {
     .inputValidator(getRequestConfigSchema)
     .handler(async ({ data }) => {
       const { url, config } = data
-      return makeRequest({
+      const result = await makeRequest({
         ...(config as AxiosRequestConfig),
         method: 'GET',
         url,
       })
+      console.log('result::', result)
+      return result.data
     }),
 
   post: createServerFn({ method: 'POST' })
     .inputValidator(postRequestConfigSchema)
     .handler(async ({ data }) => {
       const { url, data: body, config } = data
-      return makeRequest({
+      return await makeRequest({
         ...(config as AxiosRequestConfig),
         method: 'POST',
         url,
@@ -166,7 +170,7 @@ export const serverAxios = {
     .inputValidator(postRequestConfigSchema)
     .handler(async ({ data }) => {
       const { url, data: body, config } = data
-      return makeRequest({
+      return await makeRequest({
         ...(config as AxiosRequestConfig),
         method: 'PUT',
         url,
@@ -178,7 +182,7 @@ export const serverAxios = {
     .inputValidator(getRequestConfigSchema)
     .handler(async ({ data }) => {
       const { url, config } = data
-      return makeRequest({
+      return await makeRequest({
         ...(config as AxiosRequestConfig),
         method: 'DELETE',
         url,
@@ -189,7 +193,7 @@ export const serverAxios = {
     .inputValidator(postRequestConfigSchema)
     .handler(async ({ data }) => {
       const { url, data: body, config } = data
-      return makeRequest({
+      return await makeRequest({
         ...(config as AxiosRequestConfig),
         method: 'PATCH',
         url,
@@ -200,6 +204,19 @@ export const serverAxios = {
   request: createServerFn({ method: 'POST' })
     .inputValidator(requestConfigSchema)
     .handler(async ({ data }) => {
-      return makeRequest(data as AxiosRequestConfig)
+      return await makeRequest(data as AxiosRequestConfig)
     }),
 }
+
+export const serverAxiosGet = createServerFn({ method: 'GET' })
+  .inputValidator(getRequestConfigSchema)
+  .handler(async ({ data }) => {
+    const { url, config } = data
+    const result = await makeRequest({
+      ...(config as AxiosRequestConfig),
+      method: 'GET',
+      url,
+    })
+    console.log('result::', result)
+    return result.data
+  })
