@@ -1,222 +1,144 @@
 import { createServerFn } from '@tanstack/react-start'
-import { getRequest } from '@tanstack/react-start/server'
-import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios'
+import { getRequestHeaders } from '@tanstack/react-start/server'
+import axios, { type AxiosRequestConfig } from 'axios'
 import { z } from 'zod'
 
 import { auth } from '@/lib/auth/server'
 import { BACKEND_URL } from '@/constants/env'
 
-const serverAxiosInstance = axios.create({
-  baseURL: BACKEND_URL,
-})
+const httpClient = axios.create({ baseURL: BACKEND_URL })
 
-export interface SerializableAxiosResponse {
-  data: Record<string, {}>
-  status: number
-  statusText: string
-  headers: Record<string, string>
+// Error type compatible with server-client serialization
+export class ApiError extends Error {
+  statusCode: number
+  errors?: unknown[]
+
+  constructor(statusCode: number, message: string, errors?: unknown[]) {
+    super(message)
+    this.name = 'ApiError'
+    this.statusCode = statusCode
+    this.errors = errors
+  }
 }
 
-export const getSessionWithToken = createServerFn({ method: 'GET' }).handler(
-  async () => {
-    const request = getRequest()
-    const headers = request?.headers ?? new Headers()
+function throwApiError(error: unknown): never {
+  if (axios.isAxiosError(error) && error.response) {
+    const body = error.response.data as Record<string, unknown> | undefined
+    throw new ApiError(
+      error.response.status,
+      (body?.message as string) ?? error.message,
+      body?.errors as unknown[] | undefined,
+    )
+  }
+  throw error
+}
+
+// Token management helpers
+async function getAccessToken(): Promise<string | null> {
+  const headers = getRequestHeaders()
+  try {
+    const session = await auth.api.getSession({ headers })
+    if (!session?.session) return null
+    return (session.session as Record<string, unknown>).accessToken as
+      | string
+      | null
+  } catch {
+    return null
+  }
+}
+
+async function refreshAndGetToken(): Promise<string | null> {
+  const headers = getRequestHeaders()
+  try {
+    // Call better-auth's refreshToken endpoint with actual request headers
+    // so it can identify the session from the cookie
+    await auth.api.refreshToken({ headers, body: {} })
+    // Re-read session to get the new access token
+    const session = await auth.api.getSession({ headers })
+    if (!session?.session) return null
+    return (session.session as Record<string, unknown>).accessToken as
+      | string
+      | null
+  } catch {
+    return null
+  }
+}
+
+const requestSchema = z.object({
+  method: z.enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH']),
+  url: z.string(),
+  data: z.unknown().optional(),
+  params: z.record(z.string(), z.unknown()).optional(),
+  headers: z.record(z.string(), z.string()).optional(),
+})
+
+// Server-side request handler
+const serverRequest = createServerFn({ method: 'POST' })
+  .inputValidator(requestSchema)
+  .handler(async ({ data: input }) => {
+    const token = await getAccessToken()
+
+    const config: AxiosRequestConfig = {
+      method: input.method,
+      url: input.url,
+      data: input.data,
+      params: input.params,
+      headers: {
+        ...input.headers,
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    }
 
     try {
-      const session = await auth.api.getSession({
-        headers,
-      })
-
-      if (!session?.session) return null
-
-      return {
-        accessToken: (session.session as unknown as Record<string, string>)
-          .accessToken,
-        refreshToken: (session.session as unknown as Record<string, string>)
-          .refreshToken,
+      const res = await httpClient.request(config)
+      return res.data as { [key: string]: {} }
+    } catch (error) {
+      if (!axios.isAxiosError(error) || error.response?.status !== 401) {
+        throwApiError(error)
       }
-    } catch {
-      return null
-    }
-  },
-)
 
-function serializeResponse(response: AxiosResponse): SerializableAxiosResponse {
-  const headers: Record<string, string> = {}
+      // Attempt token refresh on 401
+      const newToken = await refreshAndGetToken()
+      if (!newToken) throwApiError(error)
 
-  if (response.headers) {
-    Object.entries(response.headers).forEach(([key, value]) => {
-      if (typeof value === 'string') {
-        headers[key] = value
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${newToken}`,
       }
-    })
-  }
 
-  return {
-    data: (response.data ?? {}) as Record<string, {}>,
-    status: response.status,
-    statusText: response.statusText,
-    headers,
-  }
-}
-
-async function makeRequest(
-  config: AxiosRequestConfig,
-): Promise<SerializableAxiosResponse> {
-  const tokens = await getSessionWithToken()
-
-  const requestConfig: AxiosRequestConfig = {
-    ...config,
-    headers: {
-      ...config.headers,
-      ...(tokens?.accessToken && {
-        Authorization: `Bearer ${tokens.accessToken}`,
-      }),
-    },
-  }
-
-  try {
-    const response = await serverAxiosInstance.request(requestConfig)
-    console.log('response::', response)
-    console.log('serializeResponse(response)::', serializeResponse(response))
-    return serializeResponse(response)
-  } catch (error) {
-    if (axios.isAxiosError(error) && error.response?.status === 401) {
       try {
-        await auth.api.refreshToken({
-          body: {},
-          headers: new Headers(),
-        })
-
-        const newTokens = await getSessionWithToken()
-
-        const retryConfig: AxiosRequestConfig = {
-          ...config,
-          headers: {
-            ...config.headers,
-            ...(newTokens?.accessToken && {
-              Authorization: `Bearer ${newTokens.accessToken}`,
-            }),
-          },
-        }
-
-        const response = await serverAxiosInstance.request(retryConfig)
-        return serializeResponse(response)
-      } catch {
-        throw error
+        const res = await httpClient.request(config)
+        return res.data as { [key: string]: {} }
+      } catch (retryError) {
+        throwApiError(retryError)
       }
     }
-    throw error
-  }
-}
-
-const axiosConfigSchema = z.object({
-  headers: z.record(z.string(), z.unknown()).optional(),
-  params: z.record(z.string(), z.unknown()).optional(),
-  timeout: z.number().optional(),
-  withCredentials: z.boolean().optional(),
-  responseType: z
-    .enum(['json', 'text', 'blob', 'arraybuffer', 'document'])
-    .optional(),
-})
-
-const getRequestConfigSchema = z.object({
-  url: z.string(),
-  config: axiosConfigSchema.optional(),
-})
-
-const postRequestConfigSchema = z.object({
-  url: z.string(),
-  data: z.unknown().optional(),
-  config: axiosConfigSchema.optional(),
-})
-
-const requestConfigSchema = z.object({
-  url: z.string(),
-  method: z
-    .enum(['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'])
-    .optional(),
-  ...axiosConfigSchema.shape,
-  data: z.unknown().optional(),
-})
-
-export const serverAxios = {
-  get: createServerFn({ method: 'GET' })
-    .inputValidator(getRequestConfigSchema)
-    .handler(async ({ data }) => {
-      const { url, config } = data
-      const result = await makeRequest({
-        ...(config as AxiosRequestConfig),
-        method: 'GET',
-        url,
-      })
-      console.log('result::', result)
-      return result.data
-    }),
-
-  post: createServerFn({ method: 'POST' })
-    .inputValidator(postRequestConfigSchema)
-    .handler(async ({ data }) => {
-      const { url, data: body, config } = data
-      return await makeRequest({
-        ...(config as AxiosRequestConfig),
-        method: 'POST',
-        url,
-        data: body,
-      })
-    }),
-
-  put: createServerFn({ method: 'POST' })
-    .inputValidator(postRequestConfigSchema)
-    .handler(async ({ data }) => {
-      const { url, data: body, config } = data
-      return await makeRequest({
-        ...(config as AxiosRequestConfig),
-        method: 'PUT',
-        url,
-        data: body,
-      })
-    }),
-
-  delete: createServerFn({ method: 'POST' })
-    .inputValidator(getRequestConfigSchema)
-    .handler(async ({ data }) => {
-      const { url, config } = data
-      return await makeRequest({
-        ...(config as AxiosRequestConfig),
-        method: 'DELETE',
-        url,
-      })
-    }),
-
-  patch: createServerFn({ method: 'POST' })
-    .inputValidator(postRequestConfigSchema)
-    .handler(async ({ data }) => {
-      const { url, data: body, config } = data
-      return await makeRequest({
-        ...(config as AxiosRequestConfig),
-        method: 'PATCH',
-        url,
-        data: body,
-      })
-    }),
-
-  request: createServerFn({ method: 'POST' })
-    .inputValidator(requestConfigSchema)
-    .handler(async ({ data }) => {
-      return await makeRequest(data as AxiosRequestConfig)
-    }),
-}
-
-export const serverAxiosGet = createServerFn({ method: 'GET' })
-  .inputValidator(getRequestConfigSchema)
-  .handler(async ({ data }) => {
-    const { url, config } = data
-    const result = await makeRequest({
-      ...(config as AxiosRequestConfig),
-      method: 'GET',
-      url,
-    })
-    console.log('result::', result)
-    return result.data
   })
+
+// Client-side API wrapper
+export const api = {
+  get: <T = unknown>(url: string, params?: Record<string, unknown>) =>
+    serverRequest({
+      data: { method: 'GET' as const, url, params },
+    }) as Promise<T>,
+
+  post: <T = unknown>(url: string, data?: unknown) =>
+    serverRequest({
+      data: { method: 'POST' as const, url, data },
+    }) as Promise<T>,
+
+  put: <T = unknown>(url: string, data?: unknown) =>
+    serverRequest({
+      data: { method: 'PUT' as const, url, data },
+    }) as Promise<T>,
+
+  patch: <T = unknown>(url: string, data?: unknown) =>
+    serverRequest({
+      data: { method: 'PATCH' as const, url, data },
+    }) as Promise<T>,
+
+  delete: <T = unknown>(url: string) =>
+    serverRequest({
+      data: { method: 'DELETE' as const, url },
+    }) as Promise<T>,
+}

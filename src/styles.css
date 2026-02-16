@@ -127,3 +127,62 @@
     @apply font-sans;
   }
 }
+
+/*
+ * Vercel-style sidebar hover-reveal behavior.
+ *
+ * When the sidebar is collapsed (offcanvas), hovering the trigger zone
+ * or the sidebar container itself slides the sidebar back into view
+ * as a floating overlay. Clicking the trigger then expands it fully --
+ * the sidebar is already at left:0, so only the gap width animates open.
+ * This creates a seamless transition from floating to expanded.
+ */
+
+/* When collapsed: slide the sidebar back to left:0 on trigger hover or self-hover */
+[data-slot='sidebar-wrapper']:has(.sidebar-trigger-zone--collapsed:hover)
+  [data-slot='sidebar'][data-state='collapsed'][data-collapsible='offcanvas']
+  [data-slot='sidebar-container'][data-side='left'],
+[data-slot='sidebar-wrapper']:has(
+    [data-state='collapsed'][data-collapsible='offcanvas']
+      .sidebar-container:hover
+  )
+  [data-slot='sidebar'][data-state='collapsed'][data-collapsible='offcanvas']
+  [data-slot='sidebar-container'][data-side='left'] {
+  left: 0;
+  z-index: 50;
+  padding: 0.5rem;
+  /* Floating panel positioning - avoid blocking the header/trigger */
+  top: 4rem;
+  bottom: 1rem;
+  height: auto;
+}
+
+/* Floating appearance for the inner sidebar panel when hover-revealed */
+[data-slot='sidebar-wrapper']:has(.sidebar-trigger-zone--collapsed:hover)
+  [data-slot='sidebar'][data-state='collapsed'][data-collapsible='offcanvas']
+  [data-slot='sidebar-inner'],
+[data-slot='sidebar-wrapper']:has(
+    [data-state='collapsed'][data-collapsible='offcanvas']
+      .sidebar-container:hover
+  )
+  [data-slot='sidebar'][data-state='collapsed'][data-collapsible='offcanvas']
+  [data-slot='sidebar-inner'] {
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  outline: 1px solid var(--sidebar-border);
+}
+
+/* Hide border-right on container when hover-revealed (looks floating instead) */
+[data-slot='sidebar-wrapper']:has(.sidebar-trigger-zone--collapsed:hover)
+  [data-slot='sidebar'][data-state='collapsed'][data-collapsible='offcanvas']
+  [data-slot='sidebar-container'][data-side='left'],
+[data-slot='sidebar-wrapper']:has(
+    [data-state='collapsed'][data-collapsible='offcanvas']
+      .sidebar-container:hover
+  )
+  [data-slot='sidebar'][data-state='collapsed'][data-collapsible='offcanvas']
+  [data-slot='sidebar-container'][data-side='left'] {
+  border-right: none;
+}

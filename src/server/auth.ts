@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start'
 import { auth } from '@/lib/auth/server'
 import { refreshTokenBodySchema, signInBodySchema } from '@/schema/auth'
+import { getRequestHeaders } from '@tanstack/react-start/server'
 
 export const loginFn = createServerFn()
   .inputValidator(signInBodySchema)
@@ -15,3 +16,9 @@ export const refreshTokenFn = createServerFn()
     const res = await auth.api.refreshToken({ body: data })
     return res
   })
+
+export const logoutFn = createServerFn().handler(async () => {
+  const headers = getRequestHeaders()
+  const res = await auth.api.signOut({ headers })
+  return res
+})

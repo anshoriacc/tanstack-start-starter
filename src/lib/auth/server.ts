@@ -8,7 +8,7 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: { enabled: false },
   session: {
-    cookieCache: { enabled: true, maxAge: 1000 * 60 * 60 },
+    cookieCache: { enabled: true, maxAge: 60 * 60 },
     additionalFields: {
       accessToken: { type: 'string' },
       refreshToken: { type: 'string' },
