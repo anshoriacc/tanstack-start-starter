@@ -6,6 +6,9 @@ import {
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
+import { formDevtoolsPlugin } from '@tanstack/react-form-devtools'
+import { Toaster } from 'sonner'
+import appCss from '../styles.css?url'
 import type { QueryClient } from '@tanstack/react-query'
 
 import { getThemeServerFn, resolveTheme } from '@/server/theme'
@@ -15,12 +18,13 @@ import {
   ThemeDetectionScript,
   generateThemeScript,
 } from '@/components/inline-scripts'
-import appCss from '../styles.css?url'
+import { getSessionQueryOptions } from '@/hooks/api/auth'
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   {
-    loader: async () => {
+    loader: async ({ context }) => {
       const theme = await getThemeServerFn()
+      await context.queryClient.ensureQueryData(getSessionQueryOptions)
 
       // On server, resolve theme immediately
       // On client, we can't access headers, so we'll rely on the inline script
@@ -103,19 +107,23 @@ function RootDocument({ children }: RootDocumentProps) {
             }}
             plugins={[
               {
+                name: 'Tanstack Router',
+                render: <TanStackRouterDevtoolsPanel />,
+              },
+              {
                 name: 'TanStack Query',
                 render: <ReactQueryDevtoolsPanel />,
                 defaultOpen: true,
               },
-              {
-                name: 'Tanstack Router',
-                render: <TanStackRouterDevtoolsPanel />,
-              },
+              formDevtoolsPlugin(),
             ]}
           />
         ) : null}
 
         <ThemeDetectionScript />
+
+        <Toaster />
+
         <Scripts />
       </body>
     </html>

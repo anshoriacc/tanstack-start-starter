@@ -1,12 +1,19 @@
-import { queryOptions, useMutation, useQuery } from '@tanstack/react-query'
+import {
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 
-import { TSignInBody } from '@/schema/auth'
-import { loginFn, logoutFn } from '@/server/auth'
+import type { TSignInBody } from '@/schema/auth'
+import { getSession, loginFn, logoutFn } from '@/server/auth'
 import { api } from '@/server/axios'
 
-export const useLoginMutation = () =>
-  useMutation({
+export const useLoginMutation = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
     mutationFn: async (data: TSignInBody) => {
       const res = await loginFn({ data })
 
@@ -16,10 +23,15 @@ export const useLoginMutation = () =>
 
       return res
     },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['session'] })
+    },
   })
+}
 
 export const useLogoutMutation = () => {
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async () => {
@@ -33,9 +45,17 @@ export const useLogoutMutation = () => {
     },
     onSuccess: () => {
       navigate({ to: '/login', replace: true })
+      queryClient.invalidateQueries({ queryKey: ['session'] })
     },
   })
 }
+
+export const getSessionQueryOptions = queryOptions({
+  queryKey: ['session'],
+  queryFn: () => getSession(),
+})
+
+export const useGetSessionQuery = () => useQuery(getSessionQueryOptions)
 
 export const getCurrentUserQueryOptions = queryOptions({
   queryKey: ['auth'],

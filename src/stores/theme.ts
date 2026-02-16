@@ -1,5 +1,9 @@
 import { create } from 'zustand'
-import { setThemeServerFn, type TTheme, type TResolvedTheme } from '@/server/theme'
+import {
+  type TResolvedTheme,
+  type TTheme,
+  setThemeServerFn,
+} from '@/server/theme'
 
 export type { TTheme, TResolvedTheme }
 
@@ -12,26 +16,32 @@ interface ThemeStore {
   setSystemTheme: (systemTheme: TResolvedTheme) => void
 }
 
-const getInitialTheme = (): { theme: TTheme; resolvedTheme: TResolvedTheme } => {
+const getInitialTheme = (): {
+  theme: TTheme
+  resolvedTheme: TResolvedTheme
+} => {
   if (typeof document === 'undefined') {
     return { theme: 'system', resolvedTheme: 'dark' }
   }
-  
+
   const html = document.documentElement
   const datasetTheme = html.dataset.theme as TTheme | undefined
-  const classTheme = html.classList.contains('light') 
-    ? 'light' 
-    : html.classList.contains('dark') 
-      ? 'dark' 
+  const classTheme = html.classList.contains('light')
+    ? 'light'
+    : html.classList.contains('dark')
+      ? 'dark'
       : null
-  
+
   const resolvedTheme = classTheme || 'dark'
   const theme = datasetTheme || (classTheme as TTheme) || 'system'
-  
+
   return { theme, resolvedTheme }
 }
 
-const resolveTheme = (theme: TTheme, systemTheme: TResolvedTheme): TResolvedTheme => {
+const resolveTheme = (
+  theme: TTheme,
+  systemTheme: TResolvedTheme,
+): TResolvedTheme => {
   if (theme === 'system') {
     return systemTheme
   }
@@ -40,7 +50,7 @@ const resolveTheme = (theme: TTheme, systemTheme: TResolvedTheme): TResolvedThem
 
 const applyTheme = (resolvedTheme: TResolvedTheme) => {
   if (typeof document === 'undefined') return
-  
+
   const html = document.documentElement
   html.classList.remove('light', 'dark')
   html.classList.add(resolvedTheme)
@@ -48,40 +58,40 @@ const applyTheme = (resolvedTheme: TResolvedTheme) => {
 
 export const useThemeStore = create<ThemeStore>((set, get) => {
   const initial = getInitialTheme()
-  
+
   return {
     theme: initial.theme,
     resolvedTheme: initial.resolvedTheme,
     systemTheme: initial.resolvedTheme,
-    
+
     initTheme: (theme, resolvedTheme) => {
       set({ theme, resolvedTheme })
     },
-    
+
     setTheme: async (theme) => {
       const { systemTheme } = get()
       const resolvedTheme = resolveTheme(theme, systemTheme)
-      
+
       set({ theme, resolvedTheme })
       applyTheme(resolvedTheme)
-      
+
       if (typeof document !== 'undefined') {
         document.documentElement.dataset.theme = theme
       }
-      
+
       try {
         await setThemeServerFn({ data: theme })
       } catch (error) {
         console.error('Failed to persist theme:', error)
       }
     },
-    
+
     setSystemTheme: (systemTheme) => {
       const { theme } = get()
       const resolvedTheme = resolveTheme(theme, systemTheme)
-      
+
       set({ systemTheme, resolvedTheme })
-      
+
       if (theme === 'system') {
         applyTheme(resolvedTheme)
       }
@@ -90,6 +100,7 @@ export const useThemeStore = create<ThemeStore>((set, get) => {
 })
 
 export const useTheme = () => useThemeStore((state) => state.theme)
-export const useResolvedTheme = () => useThemeStore((state) => state.resolvedTheme)
+export const useResolvedTheme = () =>
+  useThemeStore((state) => state.resolvedTheme)
 export const useSetTheme = () => useThemeStore((state) => state.setTheme)
 export const useSystemTheme = () => useThemeStore((state) => state.systemTheme)

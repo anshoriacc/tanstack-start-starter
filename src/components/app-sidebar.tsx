@@ -1,4 +1,5 @@
 import React from 'react'
+import { IconChevronRight, IconLogout, IconSelector } from '@tabler/icons-react'
 import {
   Sidebar,
   SidebarContent,
@@ -17,7 +18,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from './ui/collapsible'
-import { IconChevronRight, IconLogout, IconSelector } from '@tabler/icons-react'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,9 +28,8 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 import { Avatar, AvatarFallback } from './ui/avatar'
-import { useLogoutMutation } from '@/hooks/api/auth'
-import { useNavigate } from '@tanstack/react-router'
 import { ToggleTheme } from './toggle-theme'
+import { useLogoutMutation } from '@/hooks/api/auth'
 
 const navs = [
   {
@@ -102,72 +101,6 @@ const navs = [
       },
     ],
   },
-  {
-    title: 'API Reference',
-    url: '#',
-    items: [
-      {
-        title: 'Components',
-        url: '#',
-      },
-      {
-        title: 'File Conventions',
-        url: '#',
-      },
-      {
-        title: 'Functions',
-        url: '#',
-      },
-      {
-        title: 'next.config.js Options',
-        url: '#',
-      },
-      {
-        title: 'CLI',
-        url: '#',
-      },
-      {
-        title: 'Edge Runtime',
-        url: '#',
-      },
-    ],
-  },
-  {
-    title: 'Architecture',
-    url: '#',
-    items: [
-      {
-        title: 'Accessibility',
-        url: '#',
-      },
-      {
-        title: 'Fast Refresh',
-        url: '#',
-      },
-      {
-        title: 'Next.js Compiler',
-        url: '#',
-      },
-      {
-        title: 'Supported Browsers',
-        url: '#',
-      },
-      {
-        title: 'Turbopack',
-        url: '#',
-      },
-    ],
-  },
-  {
-    title: 'Community',
-    url: '#',
-    items: [
-      {
-        title: 'Contribution Guide',
-        url: '#',
-      },
-    ],
-  },
 ]
 
 export const AppSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
@@ -181,7 +114,6 @@ export const AppSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
     <Sidebar {...props}>
       <SidebarHeader></SidebarHeader>
       <SidebarContent className="gap-0">
-        {/* We create a collapsible SidebarGroup for each parent. */}
         {navs.map((item) => (
           <Collapsible
             key={item.title}

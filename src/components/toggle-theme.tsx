@@ -1,12 +1,12 @@
 import { IconDeviceImac, IconMoon, IconSun } from '@tabler/icons-react'
 import { ToggleGroup, ToggleGroupItem } from './ui/toggle-group'
-import { useTheme, useSetTheme, type TTheme } from '@/stores/theme.store'
+import { type TTheme, useSetTheme, useTheme } from '@/stores/theme'
 
 export const ToggleTheme = () => {
   const theme = useTheme()
   const setTheme = useSetTheme()
 
-  const handleThemeChange = (value: string[]) => {
+  const handleThemeChange = (value: Array<string>) => {
     if (value.length > 0) {
       setTheme(value[0] as TTheme)
     }

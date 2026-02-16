@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useForm } from '@tanstack/react-form'
 import { useState } from 'react'
+import { IconEye, IconEyeOff } from '@tabler/icons-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -24,7 +25,6 @@ import {
   InputGroupButton,
   InputGroupInput,
 } from '@/components/ui/input-group'
-import { IconEye, IconEyeOff } from '@tabler/icons-react'
 
 export const Route = createFileRoute('/_auth/login')({
   component: LoginPage,

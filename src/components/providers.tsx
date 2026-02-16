@@ -1,6 +1,5 @@
 import React from 'react'
-import type { TTheme, TResolvedTheme } from '@/server/theme'
-import { useThemeStore } from '@/stores/theme.store'
+import { useThemeStore, type TResolvedTheme, type TTheme } from '@/stores/theme'
 
 interface ProvidersProps {
   children: React.ReactNode

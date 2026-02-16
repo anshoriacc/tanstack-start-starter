@@ -1,8 +1,8 @@
-import type { BetterAuthPlugin } from 'better-auth'
-import type { BetterAuthClientPlugin } from 'better-auth/client'
 import { setSessionCookie } from 'better-auth/cookies'
-import { createAuthEndpoint } from 'better-auth/api'
+import { createAuthEndpoint, getSessionFromCtx } from 'better-auth/api'
 import { AxiosError } from 'axios'
+import type { BetterAuthClientPlugin } from 'better-auth/client'
+import type { BetterAuthPlugin } from 'better-auth'
 
 import { axiosApi } from '@/lib/axios'
 import { BACKEND_URL } from '@/constants/env'
@@ -26,7 +26,7 @@ export const customCredentials = () => {
           try {
             const { data } = await axiosApi.post<TLoginResponse>(
               `${BASE_URL}/auth/login`,
-              { username, password },
+              { username, password, expiresInMins: 5 },
             )
 
             const { accessToken, refreshToken } = data
@@ -72,13 +72,14 @@ export const customCredentials = () => {
           body: refreshTokenBodySchema,
         },
         async (ctx) => {
-          const session = ctx.context.session?.session
+          const session = await getSessionFromCtx(ctx)
+          console.log('session::', session)
 
           if (!session) {
             return ctx.json({ error: 'No session found' }, { status: 401 })
           }
 
-          const refreshToken = session.refreshToken
+          const refreshToken = session.session.refreshToken
 
           if (!refreshToken) {
             return ctx.json(
@@ -87,7 +88,7 @@ export const customCredentials = () => {
             )
           }
 
-          const expiresInMins = ctx.body.expiresInMins ?? 1440
+          const expiresInMins = ctx.body.expiresInMins ?? 10
 
           try {
             const { data } = await axiosApi.post<TRefreshTokenResponse>(
@@ -97,10 +98,15 @@ export const customCredentials = () => {
                 expiresInMins,
               },
             )
+            console.log('data::', new Date().toISOString(), data)
 
-            await ctx.context.internalAdapter.updateSession(session.id, {
-              accessToken: data.accessToken,
-              refreshToken: data.refreshToken,
+            await setSessionCookie(ctx, {
+              session: {
+                ...session.session,
+                accessToken: data.accessToken,
+                refreshToken: data.refreshToken,
+              },
+              user: session.user,
             })
 
             return ctx.json({
@@ -108,7 +114,9 @@ export const customCredentials = () => {
               message: 'Token refreshed successfully',
             })
           } catch (error) {
-            await ctx.context.internalAdapter.deleteSession(session.id)
+            await ctx.context.internalAdapter.deleteSession(
+              session.session.token,
+            )
 
             return ctx.json({ error: 'Invalid refresh token' }, { status: 401 })
           }
