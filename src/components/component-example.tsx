@@ -1,4 +1,6 @@
 import * as React from 'react'
+import { Link } from '@tanstack/react-router'
+import { toast } from 'sonner'
 import {
   IconAlertCircle,
   IconBriefcase,
@@ -25,9 +27,22 @@ import {
   IconUser,
   IconUsers,
 } from '@tabler/icons-react'
-import { toast } from 'sonner'
 
 import { cn } from '@/lib/utils'
+import { useGetSessionQuery, useGetCurrentUserQuery } from '@/hooks/api/auth'
+import { type TTheme, useSetTheme, useTheme } from '@/stores/theme'
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { ButtonGroup } from '@/components/ui/button-group'
+import { Separator } from '@/components/ui/separator'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Kbd, KbdGroup } from '@/components/ui/kbd'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Textarea } from '@/components/ui/textarea'
+import { Toggle } from '@/components/ui/toggle'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
 import {
   Accordion,
   AccordionContent,
@@ -59,7 +74,6 @@ import {
   AvatarGroupCount,
   AvatarImage,
 } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -77,7 +91,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
 
 import {
   Combobox,
@@ -124,16 +137,14 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
 import {
   InputGroup,
   InputGroupAddon,
+  InputGroupButton,
   InputGroupInput,
   InputGroupText,
 } from '@/components/ui/input-group'
-import { Kbd, KbdGroup } from '@/components/ui/kbd'
-import { Label } from '@/components/ui/label'
 import {
   Pagination,
   PaginationContent,
@@ -159,8 +170,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Separator } from '@/components/ui/separator'
-import { Skeleton } from '@/components/ui/skeleton'
 import {
   Sheet,
   SheetClose,
@@ -181,19 +190,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Textarea } from '@/components/ui/textarea'
-import { Toggle } from '@/components/ui/toggle'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { useGetSessionQuery, useGetCurrentUserQuery } from '@/hooks/api/auth'
-import { Link } from '@tanstack/react-router'
-import { type TTheme, useSetTheme, useTheme } from '@/stores/theme'
 
 const UserProfileExample = () => {
   const { data: session } = useGetSessionQuery()
@@ -747,12 +749,31 @@ const FormExample = () => {
                   </InputGroupAddon>
                   <InputGroupInput
                     id="salary"
-                    type="number"
                     placeholder="Enter annual salary"
                   />
                   <InputGroupAddon>
                     <InputGroupText>USD</InputGroupText>
                   </InputGroupAddon>
+                </InputGroup>
+              </Field>
+
+              <Field>
+                <FieldLabel htmlFor="website">Website</FieldLabel>
+                <InputGroup>
+                  <InputGroupAddon>
+                    <IconSearch className="text-muted-foreground size-4" />
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    id="website"
+                    type="url"
+                    placeholder="company.com"
+                  />
+                  <InputGroupButton
+                    type="button"
+                    onClick={() => toast.success('Opening website')}
+                  >
+                    <IconSearch className="size-4" />
+                  </InputGroupButton>
                 </InputGroup>
               </Field>
 
@@ -1185,90 +1206,104 @@ function EmptyStateExample() {
 const ToggleTooltipExample = () => {
   return (
     <ExampleCard title="Toggle & Tooltip">
-      <div className="space-y-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Toggle aria-label="Toggle grid view">
-                    <IconUsers className="size-4" />
-                  </Toggle>
-                }
-              />
-              <TooltipContent>
-                <p>Toggle Grid View</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <p className="text-sm font-medium">View Toggle</p>
+          <ButtonGroup>
+            <Button variant="outline" size="sm">
+              <IconUsers className="size-4" />
+            </Button>
+            <Button variant="outline" size="sm">
+              <IconFileText className="size-4" />
+            </Button>
+          </ButtonGroup>
+        </div>
 
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Toggle variant="outline" aria-label="Toggle list view">
-                    <IconFileText className="size-4" />
-                  </Toggle>
-                }
-              />
-              <TooltipContent>
-                <p>Toggle List View</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+        <div className="space-y-2">
+          <p className="text-sm font-medium">With Tooltip</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Toggle aria-label="Toggle grid view">
+                      <IconUsers className="size-4" />
+                    </Toggle>
+                  }
+                />
+                <TooltipContent>
+                  <p>Toggle Grid View</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
 
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Toggle variant="outline" aria-label="Toggle list view">
+                      <IconFileText className="size-4" />
+                    </Toggle>
+                  }
+                />
+                <TooltipContent>
+                  <p>Toggle List View</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={() => toast.success('Copied to clipboard')}
+                    >
+                      <IconCopy className="size-4" />
+                    </Button>
+                  }
+                />
+                <TooltipContent>
+                  <p>Copy Employee ID</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            <Popover>
+              <PopoverTrigger
                 render={
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => toast.success('Copied to clipboard')}
-                  >
-                    <IconCopy className="size-4" />
+                  <Button variant="outline">
+                    <IconUser className="size-4" />
+                    Quick Actions
                   </Button>
                 }
               />
-              <TooltipContent>
-                <p>Copy Employee ID</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+              <PopoverContent className="w-56">
+                <PopoverHeader>
+                  <PopoverTitle>Employee Actions</PopoverTitle>
+                  <PopoverDescription>
+                    Common tasks for this employee
+                  </PopoverDescription>
+                </PopoverHeader>
+                <div className="grid gap-2">
+                  <Button variant="ghost" size="sm" className="justify-start">
+                    <IconMail className="mr-2 size-4" />
+                    Send Email
+                  </Button>
+                  <Button variant="ghost" size="sm" className="justify-start">
+                    <IconCalendar className="mr-2 size-4" />
+                    Schedule Meeting
+                  </Button>
+                  <Button variant="ghost" size="sm" className="justify-start">
+                    <IconFolder className="mr-2 size-4" />
+                    View Documents
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
         </div>
-
-        <Popover>
-          <PopoverTrigger
-            render={
-              <Button variant="outline">
-                <IconUser className="size-4" />
-                Quick Actions
-              </Button>
-            }
-          />
-          <PopoverContent className="w-56">
-            <PopoverHeader>
-              <PopoverTitle>Employee Actions</PopoverTitle>
-              <PopoverDescription>
-                Common tasks for this employee
-              </PopoverDescription>
-            </PopoverHeader>
-            <div className="grid gap-2">
-              <Button variant="ghost" size="sm" className="justify-start">
-                <IconMail className="mr-2 size-4" />
-                Send Email
-              </Button>
-              <Button variant="ghost" size="sm" className="justify-start">
-                <IconCalendar className="mr-2 size-4" />
-                Schedule Meeting
-              </Button>
-              <Button variant="ghost" size="sm" className="justify-start">
-                <IconFolder className="mr-2 size-4" />
-                View Documents
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
       </div>
     </ExampleCard>
   )
