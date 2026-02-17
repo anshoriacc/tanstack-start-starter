@@ -1,33 +1,31 @@
 import React from 'react'
-import { useThemeStore, type TResolvedTheme, type TTheme } from '@/stores/theme'
+import type { TTheme } from '@/server/theme'
+import { ThemeContext } from '@/lib/theme-context'
+import { useThemeStore, getSystemTheme, applyTheme } from '@/stores/theme'
 
-interface ProvidersProps {
+type Props = {
   children: React.ReactNode
   theme: TTheme
-  resolvedTheme: TResolvedTheme
 }
 
-export function Providers({ children, theme, resolvedTheme }: ProvidersProps) {
-  const initialized = React.useRef(false)
-
-  React.useEffect(() => {
-    if (!initialized.current) {
-      useThemeStore.getState().initTheme(theme, resolvedTheme)
-      initialized.current = true
-    }
-  }, [theme, resolvedTheme])
-
+export function Providers({ theme, children }: Props) {
+  // Listen for OS-level theme changes
   React.useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
 
-    const handleChange = (e: MediaQueryListEvent) => {
-      const systemTheme = e.matches ? 'dark' : 'light'
-      useThemeStore.getState().setSystemTheme(systemTheme)
+    const handleChange = () => {
+      const state = useThemeStore.getState()
+      const effectiveTheme = state.theme ?? theme
+      if (effectiveTheme === 'system') {
+        const resolved = getSystemTheme()
+        useThemeStore.setState({ resolvedTheme: resolved })
+        applyTheme(resolved)
+      }
     }
 
     mediaQuery.addEventListener('change', handleChange)
     return () => mediaQuery.removeEventListener('change', handleChange)
-  }, [])
+  }, [theme])
 
-  return <>{children}</>
+  return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
 }

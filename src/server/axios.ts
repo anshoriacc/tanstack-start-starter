@@ -52,8 +52,7 @@ async function refreshAndGetToken(): Promise<string | null> {
   try {
     // Call better-auth's refreshToken endpoint with actual request headers
     // so it can identify the session from the cookie
-    const refresh = await auth.api.refreshToken({ headers, body: {} })
-    console.error('refresh::', new Date().toISOString(), refresh)
+    await auth.api.refreshToken({ headers, body: {} })
     // Re-read session to get the new access token
     const session = await auth.api.getSession({ headers })
     if (!session?.session) return null
@@ -95,25 +94,12 @@ const serverRequest = createServerFn({ method: 'POST' })
       return res.data as { [key: string]: {} }
     } catch (error) {
       if (!axios.isAxiosError(error) || error.response?.status !== 401) {
-        console.error(
-          'Error in serverRequest || 401::',
-          new Date().toISOString(),
-          error,
-        )
         throwApiError(error)
       }
 
-      console.error('Error::', new Date().toISOString(), error.response)
       // Attempt token refresh on 401
       const newToken = await refreshAndGetToken()
-      console.log('newToken::', new Date().toISOString(), newToken)
       if (!newToken) {
-        console.error(
-          'Error !newToken::',
-          new Date().toISOString(),
-          error.response,
-        )
-
         throwApiError(error)
       }
 
@@ -126,7 +112,6 @@ const serverRequest = createServerFn({ method: 'POST' })
         const res = await httpClient.request(config)
         return res.data as { [key: string]: {} }
       } catch (retryError) {
-        // console.error('Error in serverRequest retryError::', new Date().toISOString(), retryError)
         throwApiError(retryError)
       }
     }

@@ -1,43 +1,24 @@
-import React from 'react'
-
-const THEME_DETECTION_SCRIPT = `(function() {
-  try {
-    const THEME_COOKIE = '_preferred-theme'
-    const DEFAULT_THEME = 'system'
-    
-    const cookieMatch = document.cookie.match(
-      new RegExp('(?:^|; )' + THEME_COOKIE + '=([^;]*)')
-    )
-    const savedTheme = cookieMatch ? cookieMatch[1] : DEFAULT_THEME
-    
-    let resolvedTheme
-    if (savedTheme === 'system' || !savedTheme) {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      resolvedTheme = prefersDark ? 'dark' : 'light'
-    } else {
-      resolvedTheme = savedTheme
-    }
-    
-    document.documentElement.classList.remove('light', 'dark')
-    document.documentElement.classList.add(resolvedTheme)
-    document.documentElement.dataset.theme = savedTheme || 'system'
-  } catch (e) {}
-})()`
-
-export function ThemeDetectionScript(): React.ReactNode {
-  return (
-    <script
-      dangerouslySetInnerHTML={{ __html: THEME_DETECTION_SCRIPT }}
-      suppressHydrationWarning
-    />
-  )
+/**
+ * Blocking theme script that runs before first paint.
+ * Reads the cookie, resolves system preference, applies the class,
+ * and stashes the result on `window.__INITIAL_THEME__` for hydration.
+ */
+export function generateThemeScript(
+  theme: 'light' | 'dark' | 'system',
+): string {
+  // This script is inlined into <head> and runs synchronously before paint.
+  // It MUST be self-contained — no external references.
+  return `(function(){try{
+var t='${theme}';
+var r;
+if(t==='system'){
+  r=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+}else{
+  r=t;
 }
-
-export function generateThemeScript(resolvedTheme: 'light' | 'dark'): string {
-  return `(function() {
-    try {
-      document.documentElement.classList.remove('light', 'dark')
-      document.documentElement.classList.add('${resolvedTheme}')
-    } catch (e) {}
-  })()`
+var d=document.documentElement;
+d.classList.remove('light','dark');
+d.classList.add(r);
+window.__INITIAL_THEME__={theme:t,resolvedTheme:r};
+}catch(e){}})()`
 }

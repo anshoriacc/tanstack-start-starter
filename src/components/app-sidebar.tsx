@@ -158,7 +158,8 @@ export const AppSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
           </Collapsible>
         ))}
       </SidebarContent>
-      <SidebarFooter>
+
+      <SidebarFooter className="items-center">
         <ToggleTheme />
       </SidebarFooter>
     </Sidebar>

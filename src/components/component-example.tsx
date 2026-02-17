@@ -1189,11 +1189,13 @@ const ToggleTooltipExample = () => {
         <div className="flex flex-wrap items-center gap-2">
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
-                <Toggle aria-label="Toggle grid view">
-                  <IconUsers className="size-4" />
-                </Toggle>
-              </TooltipTrigger>
+              <TooltipTrigger
+                render={
+                  <Toggle aria-label="Toggle grid view">
+                    <IconUsers className="size-4" />
+                  </Toggle>
+                }
+              />
               <TooltipContent>
                 <p>Toggle Grid View</p>
               </TooltipContent>
@@ -1202,11 +1204,13 @@ const ToggleTooltipExample = () => {
 
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
-                <Toggle variant="outline" aria-label="Toggle list view">
-                  <IconFileText className="size-4" />
-                </Toggle>
-              </TooltipTrigger>
+              <TooltipTrigger
+                render={
+                  <Toggle variant="outline" aria-label="Toggle list view">
+                    <IconFileText className="size-4" />
+                  </Toggle>
+                }
+              />
               <TooltipContent>
                 <p>Toggle List View</p>
               </TooltipContent>
@@ -1215,15 +1219,17 @@ const ToggleTooltipExample = () => {
 
           <TooltipProvider>
             <Tooltip>
-              <TooltipTrigger>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => toast.success('Copied to clipboard')}
-                >
-                  <IconCopy className="size-4" />
-                </Button>
-              </TooltipTrigger>
+              <TooltipTrigger
+                render={
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => toast.success('Copied to clipboard')}
+                  >
+                    <IconCopy className="size-4" />
+                  </Button>
+                }
+              />
               <TooltipContent>
                 <p>Copy Employee ID</p>
               </TooltipContent>

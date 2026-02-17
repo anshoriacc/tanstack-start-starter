@@ -73,7 +73,6 @@ export const customCredentials = () => {
         },
         async (ctx) => {
           const session = await getSessionFromCtx(ctx)
-          console.log('session::', session)
 
           if (!session) {
             return ctx.json({ error: 'No session found' }, { status: 401 })
@@ -98,7 +97,6 @@ export const customCredentials = () => {
                 expiresInMins,
               },
             )
-            console.log('data::', new Date().toISOString(), data)
 
             await setSessionCookie(ctx, {
               session: {

@@ -1,34 +1,37 @@
 import { IconDeviceImac, IconMoon, IconSun } from '@tabler/icons-react'
-import { ToggleGroup, ToggleGroupItem } from './ui/toggle-group'
+import { Button } from './ui/button'
+import { ButtonGroup } from './ui/button-group'
 import { type TTheme, useSetTheme, useTheme } from '@/stores/theme'
+
+const themes: Array<{ value: TTheme; label: string; icon: typeof IconSun }> = [
+  { value: 'system', label: 'System theme', icon: IconDeviceImac },
+  { value: 'light', label: 'Light theme', icon: IconSun },
+  { value: 'dark', label: 'Dark theme', icon: IconMoon },
+]
 
 export const ToggleTheme = () => {
   const theme = useTheme()
   const setTheme = useSetTheme()
 
-  const handleThemeChange = (value: Array<string>) => {
-    if (value.length > 0) {
-      setTheme(value[0] as TTheme)
-    }
-  }
-
   return (
-    <ToggleGroup
-      variant="outline"
-      size="sm"
-      value={[theme]}
-      onValueChange={handleThemeChange}
-      aria-label="Toggle theme"
-    >
-      <ToggleGroupItem value="system" aria-label="Use system theme">
-        <IconDeviceImac />
-      </ToggleGroupItem>
-      <ToggleGroupItem value="light" aria-label="Use light theme">
-        <IconSun />
-      </ToggleGroupItem>
-      <ToggleGroupItem value="dark" aria-label="Use dark theme">
-        <IconMoon />
-      </ToggleGroupItem>
-    </ToggleGroup>
+    <ButtonGroup aria-label="Toggle theme">
+      {themes.map((t) => {
+        const Icon = t.icon
+        const isActive = theme === t.value
+        return (
+          <Button
+            key={t.value}
+            variant="outline"
+            size="icon-sm"
+            aria-label={t.label}
+            aria-pressed={isActive}
+            onClick={() => setTheme(t.value)}
+            className={isActive ? 'bg-muted!' : 'bg-background!'}
+          >
+            <Icon className="size-4" />
+          </Button>
+        )
+      })}
+    </ButtonGroup>
   )
 }

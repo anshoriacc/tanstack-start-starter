@@ -52,9 +52,6 @@ function LoginPage() {
         onSuccess: () => {
           navigate({ to: '/dashboard', replace: true })
         },
-        onError: (err) => {
-          console.error(err)
-        },
       })
     },
   })

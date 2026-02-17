@@ -4,103 +4,78 @@ import {
   type TTheme,
   setThemeServerFn,
 } from '@/server/theme'
+import { useLoaderTheme } from '@/lib/theme-context'
 
 export type { TTheme, TResolvedTheme }
 
 interface ThemeStore {
-  theme: TTheme
-  resolvedTheme: TResolvedTheme
-  systemTheme: TResolvedTheme
-  initTheme: (theme: TTheme, resolvedTheme: TResolvedTheme) => void
+  theme: TTheme | null
+  resolvedTheme: TResolvedTheme | null
   setTheme: (theme: TTheme) => Promise<void>
-  setSystemTheme: (systemTheme: TResolvedTheme) => void
 }
 
-const getInitialTheme = (): {
-  theme: TTheme
-  resolvedTheme: TResolvedTheme
-} => {
-  if (typeof document === 'undefined') {
-    return { theme: 'system', resolvedTheme: 'dark' }
-  }
-
-  const html = document.documentElement
-  const datasetTheme = html.dataset.theme as TTheme | undefined
-  const classTheme = html.classList.contains('light')
-    ? 'light'
-    : html.classList.contains('dark')
-      ? 'dark'
-      : null
-
-  const resolvedTheme = classTheme || 'dark'
-  const theme = datasetTheme || (classTheme as TTheme) || 'system'
-
-  return { theme, resolvedTheme }
+export function getSystemTheme(): TResolvedTheme {
+  if (typeof window === 'undefined') return 'light'
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light'
 }
 
-const resolveTheme = (
+function resolveTheme(
   theme: TTheme,
   systemTheme: TResolvedTheme,
-): TResolvedTheme => {
-  if (theme === 'system') {
-    return systemTheme
-  }
+): TResolvedTheme {
+  if (theme === 'system') return systemTheme
   return theme
 }
 
-const applyTheme = (resolvedTheme: TResolvedTheme) => {
+export function applyTheme(resolvedTheme: TResolvedTheme) {
   if (typeof document === 'undefined') return
-
   const html = document.documentElement
   html.classList.remove('light', 'dark')
   html.classList.add(resolvedTheme)
 }
 
-export const useThemeStore = create<ThemeStore>((set, get) => {
-  const initial = getInitialTheme()
+export const useThemeStore = create<ThemeStore>((set) => ({
+  theme: null,
+  resolvedTheme: null,
 
-  return {
-    theme: initial.theme,
-    resolvedTheme: initial.resolvedTheme,
-    systemTheme: initial.resolvedTheme,
+  setTheme: async (theme) => {
+    const resolved = resolveTheme(theme, getSystemTheme())
+    set({ theme, resolvedTheme: resolved })
+    applyTheme(resolved)
 
-    initTheme: (theme, resolvedTheme) => {
-      set({ theme, resolvedTheme })
-    },
+    try {
+      await setThemeServerFn({ data: theme })
+    } catch (error) {
+      console.error('Failed to persist theme:', error)
+    }
+  },
+}))
 
-    setTheme: async (theme) => {
-      const { systemTheme } = get()
-      const resolvedTheme = resolveTheme(theme, systemTheme)
+/**
+ * Returns the active theme mode (system/light/dark).
+ * Loader data is the default; Zustand overrides after user interaction.
+ */
+export function useTheme(): TTheme {
+  const loaderTheme = useLoaderTheme()
+  const storeTheme = useThemeStore((s) => s.theme)
+  return storeTheme ?? loaderTheme
+}
 
-      set({ theme, resolvedTheme })
-      applyTheme(resolvedTheme)
+/**
+ * Returns the resolved theme (light/dark).
+ * On server with 'system', falls back to 'light' — the blocking script handles CSS.
+ */
+export function useResolvedTheme(): TResolvedTheme {
+  const theme = useTheme()
+  const storeResolved = useThemeStore((s) => s.resolvedTheme)
 
-      if (typeof document !== 'undefined') {
-        document.documentElement.dataset.theme = theme
-      }
+  // After user interaction, store has the resolved value
+  if (storeResolved !== null) return storeResolved
 
-      try {
-        await setThemeServerFn({ data: theme })
-      } catch (error) {
-        console.error('Failed to persist theme:', error)
-      }
-    },
+  // Initial render: resolve from the loader theme
+  return resolveTheme(theme, getSystemTheme())
+}
 
-    setSystemTheme: (systemTheme) => {
-      const { theme } = get()
-      const resolvedTheme = resolveTheme(theme, systemTheme)
-
-      set({ systemTheme, resolvedTheme })
-
-      if (theme === 'system') {
-        applyTheme(resolvedTheme)
-      }
-    },
-  }
-})
-
-export const useTheme = () => useThemeStore((state) => state.theme)
-export const useResolvedTheme = () =>
-  useThemeStore((state) => state.resolvedTheme)
-export const useSetTheme = () => useThemeStore((state) => state.setTheme)
-export const useSystemTheme = () => useThemeStore((state) => state.systemTheme)
+export const useSetTheme = () => useThemeStore((s) => s.setTheme)
