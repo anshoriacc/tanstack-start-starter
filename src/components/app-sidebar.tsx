@@ -1,118 +1,120 @@
 import React from 'react'
-import { IconChevronRight, IconLogout, IconSelector } from '@tabler/icons-react'
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarRail,
-} from './ui/sidebar'
+  IconChevronRight,
+  IconLayoutDashboard,
+  IconUsers,
+  IconBuilding,
+  IconCalendar,
+  IconCreditCard,
+  IconCash,
+  IconChartBar,
+  IconSettings,
+} from '@tabler/icons-react'
+import { Link } from '@tanstack/react-router'
+
+import { ToggleTheme } from './toggle-theme'
 import {
-  Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  Collapsible,
 } from './ui/collapsible'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from './ui/dropdown-menu'
-import { Avatar, AvatarFallback } from './ui/avatar'
-import { ToggleTheme } from './toggle-theme'
-import { useLogoutMutation } from '@/hooks/api/auth'
+  Sidebar,
+  SidebarMenu,
+  SidebarGroup,
+  SidebarHeader,
+  SidebarContent,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarFooter,
+} from './ui/sidebar'
 
 const navs = [
   {
-    title: 'Getting Started',
+    title: 'Main',
     url: '#',
     items: [
       {
-        title: 'Installation',
-        url: '#',
-      },
-      {
-        title: 'Project Structure',
-        url: '#',
+        title: 'Dashboard',
+        url: '/dashboard',
+        icon: IconLayoutDashboard,
+        isActive: true,
       },
     ],
   },
   {
-    title: 'Build Your Application',
+    title: 'HR Management',
     url: '#',
     items: [
       {
-        title: 'Routing',
+        title: 'Employees',
         url: '#',
+        icon: IconUsers,
+        isActive: false,
       },
       {
-        title: 'Data Fetching',
+        title: 'Departments',
         url: '#',
-        isActive: true,
+        icon: IconBuilding,
+        isActive: false,
       },
       {
-        title: 'Rendering',
+        title: 'Leave Requests',
         url: '#',
+        icon: IconCalendar,
+        isActive: false,
       },
       {
-        title: 'Caching',
+        title: 'Benefits',
         url: '#',
+        icon: IconCreditCard,
+        isActive: false,
+      },
+    ],
+  },
+  {
+    title: 'Finance',
+    url: '#',
+    items: [
+      {
+        title: 'Payroll',
+        url: '#',
+        icon: IconCash,
+        isActive: false,
       },
       {
-        title: 'Styling',
+        title: 'Reports',
         url: '#',
+        icon: IconChartBar,
+        isActive: false,
       },
+    ],
+  },
+  {
+    title: 'System',
+    url: '#',
+    items: [
       {
-        title: 'Optimizing',
+        title: 'Settings',
         url: '#',
-      },
-      {
-        title: 'Configuring',
-        url: '#',
-      },
-      {
-        title: 'Testing',
-        url: '#',
-      },
-      {
-        title: 'Authentication',
-        url: '#',
-      },
-      {
-        title: 'Deploying',
-        url: '#',
-      },
-      {
-        title: 'Upgrading',
-        url: '#',
-      },
-      {
-        title: 'Examples',
-        url: '#',
+        icon: IconSettings,
+        isActive: false,
       },
     ],
   },
 ]
 
 export const AppSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
-  const logoutMutation = useLogoutMutation()
-
-  const logoutHandler = () => {
-    logoutMutation.mutate()
-  }
-
   return (
     <Sidebar {...props}>
-      <SidebarHeader></SidebarHeader>
+      <SidebarHeader>
+        <div className="flex items-center gap-2 px-2 py-3">
+          <img src="/logo192.png" alt="Logo" className="h-8 w-8" />
+          <span className="font-semibold text-lg">Dashboard</span>
+        </div>
+      </SidebarHeader>
       <SidebarContent className="gap-0">
         {navs.map((item) => (
           <Collapsible
@@ -137,7 +139,14 @@ export const AppSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
                     {item.items.map((item) => (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
-                          render={<a href={item.url}>{item.title}</a>}
+                          render={
+                            <Link to={item.url}>
+                              {item.icon && (
+                                <item.icon className="mr-2 size-4" />
+                              )}
+                              {item.title}
+                            </Link>
+                          }
                           isActive={item.isActive}
                         ></SidebarMenuButton>
                       </SidebarMenuItem>
@@ -150,66 +159,8 @@ export const AppSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <SidebarMenuButton
-                    size="lg"
-                    className="data-open:bg-sidebar-accent data-open:text-sidebar-accent-foreground"
-                  >
-                    <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarFallback className="rounded-lg">AA</AvatarFallback>
-                    </Avatar>
-                    <div className="grid flex-1 text-left text-sm leading-tight">
-                      <span className="truncate font-medium">
-                        Administrator
-                      </span>
-                      <span className="truncate text-xs">admin@istrat.or</span>
-                    </div>
-                    <IconSelector className="ml-auto size-4" />
-                  </SidebarMenuButton>
-                }
-              ></DropdownMenuTrigger>
-              <DropdownMenuContent
-                className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-                side={false ? 'bottom' : 'right'}
-                align="end"
-                sideOffset={4}
-              >
-                <DropdownMenuGroup>
-                  <DropdownMenuLabel className="p-0 font-normal">
-                    <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                      <Avatar className="h-8 w-8 rounded-lg">
-                        <AvatarFallback className="rounded-lg">
-                          AA
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="grid flex-1 text-left text-sm leading-tight">
-                        <span className="truncate font-medium">
-                          Administrator
-                        </span>
-                        <span className="truncate text-xs">
-                          admin@istrat.or
-                        </span>
-                      </div>
-                    </div>
-                  </DropdownMenuLabel>
-                </DropdownMenuGroup>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logoutHandler}>
-                  <IconLogout />
-                  Log out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
-
         <ToggleTheme />
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   )
 }

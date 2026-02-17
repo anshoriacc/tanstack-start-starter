@@ -1,30 +1,33 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import React from 'react'
 import { useForm } from '@tanstack/react-form'
-import { useState } from 'react'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { IconEye, IconEyeOff } from '@tabler/icons-react'
+
+import { cn } from '@/lib/utils'
+import { signInBodySchema } from '@/schema/auth'
+import { useLoginMutation } from '@/hooks/api/auth'
+import { ToggleTheme } from '@/components/toggle-theme'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
-import { signInBodySchema } from '@/schema/auth'
-import { useLoginMutation } from '@/hooks/api/auth'
+  InputGroupButton,
+  InputGroupInput,
+  InputGroup,
+  InputGroupAddon,
+} from '@/components/ui/input-group'
 import {
-  Field,
   FieldError,
   FieldGroup,
+  Field,
   FieldLabel,
 } from '@/components/ui/field'
 import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from '@/components/ui/input-group'
+  CardContent,
+  CardDescription,
+  Card,
+  CardTitle,
+  CardHeader,
+} from '@/components/ui/card'
 
 export const Route = createFileRoute('/_auth/login')({
   component: LoginPage,
@@ -32,7 +35,7 @@ export const Route = createFileRoute('/_auth/login')({
 
 function LoginPage() {
   const navigate = useNavigate()
-  const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [showPassword, setShowPassword] = React.useState<boolean>(false)
 
   const loginMutation = useLoginMutation()
 
@@ -57,113 +60,122 @@ function LoginPage() {
   })
 
   return (
-    <main className="flex flex-col min-h-screen items-center justify-center p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Login</CardTitle>
-          <CardDescription>
-            Enter your credentials to access your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              form.handleSubmit()
-            }}
-          >
-            <FieldGroup>
-              <form.Field name="username">
-                {(field) => {
-                  const isInvalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid
+    <main
+      className={cn(
+        'flex flex-col min-h-screen items-center gap-6 p-4',
+        'bg-[linear-gradient(to_right,var(--sidebar)_1px,transparent_1px),linear-gradient(to_bottom,var(--sidebar)_1px,transparent_1px)] bg-size-[1rem_1rem]',
+      )}
+    >
+      <div className="flex-1 flex-col w-full flex items-center justify-center">
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <CardTitle>Login</CardTitle>
+            <CardDescription>
+              Enter your credentials to access your account
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                form.handleSubmit()
+              }}
+            >
+              <FieldGroup>
+                <form.Field name="username">
+                  {(field) => {
+                    const isInvalid =
+                      field.state.meta.isTouched && !field.state.meta.isValid
 
-                  return (
-                    <Field data-invalid={isInvalid}>
-                      <FieldLabel htmlFor={field.name}>Username</FieldLabel>
-                      <Input
-                        id={field.name}
-                        name={field.name}
-                        type="text"
-                        value={field.state.value}
-                        onChange={(e) => field.handleChange(e.target.value)}
-                        onBlur={field.handleBlur}
-                        aria-invalid={isInvalid}
-                        placeholder="Enter your username"
-                      />
-                      {isInvalid && (
-                        <FieldError errors={field.state.meta.errors} />
-                      )}
-                    </Field>
-                  )
-                }}
-              </form.Field>
-
-              <form.Field name="password">
-                {(field) => {
-                  const isInvalid =
-                    field.state.meta.isTouched && !field.state.meta.isValid
-
-                  return (
-                    <Field data-invalid={isInvalid}>
-                      <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-                      <InputGroup>
-                        <InputGroupInput
+                    return (
+                      <Field data-invalid={isInvalid}>
+                        <FieldLabel htmlFor={field.name}>Username</FieldLabel>
+                        <Input
                           id={field.name}
                           name={field.name}
-                          type={showPassword ? 'text' : 'password'}
+                          type="text"
                           value={field.state.value}
                           onChange={(e) => field.handleChange(e.target.value)}
                           onBlur={field.handleBlur}
                           aria-invalid={isInvalid}
-                          placeholder="Enter your password"
+                          placeholder="Enter your username"
                         />
-                        <InputGroupAddon align="inline-end">
-                          <InputGroupButton
-                            size="icon-sm"
-                            type="button"
-                            onClick={() => setShowPassword(!showPassword)}
-                            tabIndex={-1}
-                          >
-                            {showPassword ? <IconEyeOff /> : <IconEye />}
-                          </InputGroupButton>
-                        </InputGroupAddon>
-                      </InputGroup>
-                      {isInvalid && (
-                        <FieldError errors={field.state.meta.errors} />
-                      )}
-                    </Field>
-                  )
-                }}
-              </form.Field>
+                        {isInvalid && (
+                          <FieldError errors={field.state.meta.errors} />
+                        )}
+                      </Field>
+                    )
+                  }}
+                </form.Field>
 
-              {loginMutation.isError && (
-                <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
-                  {'error' in loginMutation.error &&
-                    typeof loginMutation.error.error === 'string' &&
-                    loginMutation.error.error}
-                </div>
-              )}
+                <form.Field name="password">
+                  {(field) => {
+                    const isInvalid =
+                      field.state.meta.isTouched && !field.state.meta.isValid
 
-              <form.Subscribe
-                selector={(state) => [state.canSubmit, state.isSubmitting]}
-                children={([_, isSubmitting]) => (
-                  <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={isSubmitting || loginMutation.isPending}
-                  >
-                    {isSubmitting || loginMutation.isPending
-                      ? 'Signing in...'
-                      : 'Sign in'}
-                  </Button>
+                    return (
+                      <Field data-invalid={isInvalid}>
+                        <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                        <InputGroup>
+                          <InputGroupInput
+                            id={field.name}
+                            name={field.name}
+                            type={showPassword ? 'text' : 'password'}
+                            value={field.state.value}
+                            onChange={(e) => field.handleChange(e.target.value)}
+                            onBlur={field.handleBlur}
+                            aria-invalid={isInvalid}
+                            placeholder="Enter your password"
+                          />
+                          <InputGroupAddon align="inline-end">
+                            <InputGroupButton
+                              size="icon-sm"
+                              type="button"
+                              onClick={() => setShowPassword(!showPassword)}
+                              tabIndex={-1}
+                            >
+                              {showPassword ? <IconEyeOff /> : <IconEye />}
+                            </InputGroupButton>
+                          </InputGroupAddon>
+                        </InputGroup>
+                        {isInvalid && (
+                          <FieldError errors={field.state.meta.errors} />
+                        )}
+                      </Field>
+                    )
+                  }}
+                </form.Field>
+
+                {loginMutation.isError && (
+                  <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                    {'error' in loginMutation.error &&
+                      typeof loginMutation.error.error === 'string' &&
+                      loginMutation.error.error}
+                  </div>
                 )}
-              />
-            </FieldGroup>
-          </form>
-        </CardContent>
-      </Card>
+
+                <form.Subscribe
+                  selector={(state) => [state.canSubmit, state.isSubmitting]}
+                  children={([_, isSubmitting]) => (
+                    <Button
+                      type="submit"
+                      className="w-full"
+                      disabled={isSubmitting || loginMutation.isPending}
+                    >
+                      {isSubmitting || loginMutation.isPending
+                        ? 'Signing in...'
+                        : 'Sign in'}
+                    </Button>
+                  )}
+                />
+              </FieldGroup>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+
+      <ToggleTheme />
     </main>
   )
 }
