@@ -12,11 +12,11 @@ import { Toaster } from 'sonner'
 
 import appCss from '../styles.css?url'
 import { useResolvedTheme } from '@/stores/theme'
-import { getSessionQueryOptions } from '@/hooks/api/auth'
 import { getThemeServerFn } from '@/server/theme'
+import { getSessionQueryOptions } from '@/hooks/api/auth'
+import { generateThemeScript } from '@/components/inline-scripts'
 import { Providers } from '@/components/providers'
 import { NotFound } from '@/components/not-found'
-import { generateThemeScript } from '@/components/inline-scripts'
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
@@ -67,7 +67,8 @@ interface RootDocumentProps {
 }
 
 function RootDocument({ children }: RootDocumentProps) {
-  const { theme } = Route.useLoaderData()
+  const loaderData = Route.useLoaderData()
+  const theme = loaderData?.theme ?? 'system'
   const resolvedTheme = useResolvedTheme()
 
   return (
