@@ -13,7 +13,6 @@ import { Toaster } from 'sonner'
 import appCss from '../styles.css?url'
 import { useResolvedTheme } from '@/stores/theme'
 import { getThemeServerFn } from '@/server/theme'
-import { getSessionQueryOptions } from '@/hooks/api/auth'
 import { generateThemeScript } from '@/components/inline-scripts'
 import { Providers } from '@/components/providers'
 import { NotFound } from '@/components/not-found'
@@ -21,9 +20,8 @@ import { NotFound } from '@/components/not-found'
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
 }>()({
-  loader: async ({ context }) => {
+  loader: async () => {
     const theme = await getThemeServerFn()
-    await context.queryClient.ensureQueryData(getSessionQueryOptions)
     return { theme }
   },
   head: ({ loaderData }) => {
