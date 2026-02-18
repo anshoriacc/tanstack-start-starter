@@ -41,10 +41,10 @@ export const Route = createRootRouteWithContext<{
         },
       ],
       links: [
-        // {
-        //   rel: 'stylesheet',
-        //   href: appCss,
-        // },
+        {
+          rel: 'stylesheet',
+          href: appCss,
+        },
         { rel: 'icon', href: '/favicon.ico', type: 'image/x-icon' },
         { rel: 'apple-touch-icon', href: '/logo192.png' },
       ],
@@ -73,7 +73,6 @@ function RootDocument({ children }: RootDocumentProps) {
     <html lang="en" suppressHydrationWarning>
       <head>
         <HeadContent />
-        <link rel="stylesheet" href={appCss} />
       </head>
 
       <body>
