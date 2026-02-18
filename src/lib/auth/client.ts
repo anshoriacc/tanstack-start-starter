@@ -4,12 +4,12 @@ import {
   inferAdditionalFields,
 } from 'better-auth/client/plugins'
 
-import { customCredentialsClient } from './plugins'
 import type { auth } from '@/lib/auth/server'
-import { SITE_URL } from '@/constants/env'
+import { BETTER_AUTH_BASE_URL } from '@/constants/env'
+import { customCredentialsClient } from './plugins'
 
 export const authClient = createAuthClient({
-  baseURL: SITE_URL,
+  baseURL: BETTER_AUTH_BASE_URL,
   plugins: [
     customCredentialsClient(),
     customSessionClient<typeof auth>(),
