@@ -3,9 +3,11 @@ import { customSession } from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 
 import { customCredentials } from './plugins'
+import { BETTER_AUTH_SECRET, BETTER_AUTH_BASE_URL } from '@/constants/env'
 
 export const auth = betterAuth({
-  secret: process.env.BETTER_AUTH_SECRET,
+  secret: BETTER_AUTH_SECRET,
+  baseURL: BETTER_AUTH_BASE_URL,
   emailAndPassword: { enabled: false },
   session: {
     cookieCache: { enabled: true, maxAge: 60 * 60 },
