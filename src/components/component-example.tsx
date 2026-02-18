@@ -12,7 +12,6 @@ import {
   IconCreditCard,
   IconDeviceDesktop,
   IconDotsVertical,
-  IconDownload,
   IconFileText,
   IconFilter,
   IconFolder,
@@ -100,17 +99,7 @@ import {
   ComboboxItem,
   ComboboxList,
 } from '@/components/ui/combobox'
-import {
-  Command,
-  CommandDialog,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from '@/components/ui/command'
+import { CommandPaletteButton } from '@/components/command-palette'
 import {
   Dialog,
   DialogClose,
@@ -1097,8 +1086,6 @@ const AccordionExample = () => {
 }
 
 const CommandExample = () => {
-  const [open, setOpen] = React.useState(false)
-
   return (
     <ExampleCard title="Command Palette">
       <div className="space-y-4">
@@ -1110,75 +1097,7 @@ const CommandExample = () => {
           </KbdGroup>{' '}
           or click below to open the HR command palette
         </p>
-        <Button
-          variant="outline"
-          className="w-full justify-start text-muted-foreground"
-          onClick={() => setOpen(true)}
-        >
-          <IconSearch className="mr-2 size-4" />
-          Search employees, policies...
-        </Button>
-
-        <CommandDialog open={open} onOpenChange={setOpen}>
-          <Command>
-            <CommandInput placeholder="Type a command or search..." />
-            <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
-              <CommandGroup heading="Quick Actions">
-                <CommandItem
-                  onSelect={() => {
-                    setOpen(false)
-                    toast.success('Add employee dialog opened')
-                  }}
-                >
-                  <IconPlus className="mr-2 size-4" />
-                  Add New Employee
-                  <CommandShortcut>⌘N</CommandShortcut>
-                </CommandItem>
-                <CommandItem
-                  onSelect={() => {
-                    setOpen(false)
-                    toast.success('Leave request opened')
-                  }}
-                >
-                  <IconCalendar className="mr-2 size-4" />
-                  Request Time Off
-                  <CommandShortcut>⌘L</CommandShortcut>
-                </CommandItem>
-                <CommandItem
-                  onSelect={() => {
-                    setOpen(false)
-                    toast.success('Report generated')
-                  }}
-                >
-                  <IconDownload className="mr-2 size-4" />
-                  Generate Report
-                </CommandItem>
-              </CommandGroup>
-              <CommandSeparator />
-              <CommandGroup heading="Recent Employees">
-                <CommandItem
-                  onSelect={() => {
-                    setOpen(false)
-                    toast.success('Opening John Davidson')
-                  }}
-                >
-                  <IconUser className="mr-2 size-4" />
-                  John Davidson
-                </CommandItem>
-                <CommandItem
-                  onSelect={() => {
-                    setOpen(false)
-                    toast.success('Opening Sarah Chen')
-                  }}
-                >
-                  <IconUser className="mr-2 size-4" />
-                  Sarah Chen
-                </CommandItem>
-              </CommandGroup>
-            </CommandList>
-          </Command>
-        </CommandDialog>
+        <CommandPaletteButton />
       </div>
     </ExampleCard>
   )
