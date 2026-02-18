@@ -1,7 +1,10 @@
-@import 'tailwindcss' source('./');
+@import 'tailwindcss';
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 @import '@fontsource-variable/plus-jakarta-sans';
+
+@source './routes';
+@source './components';
 
 @custom-variant dark (&:is(.dark *));
 

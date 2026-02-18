@@ -6,6 +6,7 @@ import {
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
+import { hotkeysDevtoolsPlugin } from '@tanstack/react-hotkeys-devtools'
 import { formDevtoolsPlugin } from '@tanstack/react-form-devtools'
 import type { QueryClient } from '@tanstack/react-query'
 import { Toaster } from 'sonner'
@@ -14,6 +15,7 @@ import appCss from '../styles.css?url'
 import { useResolvedTheme } from '@/stores/theme'
 import { getThemeServerFn } from '@/server/theme'
 import { getSessionQueryOptions } from '@/hooks/api/auth'
+import { GlobalCommandPalette } from '@/components/command-palette'
 import { generateThemeScript } from '@/components/inline-scripts'
 import { Providers } from '@/components/providers'
 import { NotFound } from '@/components/not-found'
@@ -80,25 +82,26 @@ function RootDocument({ children }: RootDocumentProps) {
       <body>
         <Providers theme={theme}>{children}</Providers>
 
-        {process.env.NODE_ENV === 'development' ? (
-          <TanStackDevtools
-            config={{
-              position: 'bottom-right',
-            }}
-            plugins={[
-              {
-                name: 'Tanstack Router',
-                render: <TanStackRouterDevtoolsPanel />,
-              },
-              {
-                name: 'TanStack Query',
-                render: <ReactQueryDevtoolsPanel />,
-                defaultOpen: true,
-              },
-              formDevtoolsPlugin(),
-            ]}
-          />
-        ) : null}
+        <TanStackDevtools
+          config={{
+            position: 'bottom-right',
+          }}
+          plugins={[
+            {
+              name: 'Tanstack Router',
+              render: <TanStackRouterDevtoolsPanel />,
+            },
+            {
+              name: 'TanStack Query',
+              render: <ReactQueryDevtoolsPanel />,
+              defaultOpen: true,
+            },
+            formDevtoolsPlugin(),
+            hotkeysDevtoolsPlugin(),
+          ]}
+        />
+
+        <GlobalCommandPalette />
 
         <Toaster theme={resolvedTheme} richColors />
 
