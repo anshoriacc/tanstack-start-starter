@@ -8,17 +8,27 @@ export function generateThemeScript(
 ): string {
   // This script is inlined into <head> and runs synchronously before paint.
   // It MUST be self-contained — no external references.
-  return `(function(){try{
-var t='${theme}';
-var r;
-if(t==='system'){
-  r=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
-}else{
-  r=t;
-}
-var d=document.documentElement;
-d.classList.remove('light','dark');
-d.classList.add(r);
-window.__INITIAL_THEME__={theme:t,resolvedTheme:r};
-}catch(e){}})()`
+  return `(function() {
+    try {
+      const theme = '${theme}';
+      let resolvedTheme;
+      
+      if (theme === 'system') {
+        resolvedTheme = window.matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+      } else {
+        resolvedTheme = theme;
+      }
+      
+      const root = document.documentElement;
+      root.classList.remove('light', 'dark');
+      root.classList.add(resolvedTheme);
+      
+      window.__INITIAL_THEME__ = {
+        theme: theme,
+        resolvedTheme: resolvedTheme
+      };
+    } catch (e) {
+      // Silently fail
+    }
+  })()`
 }
