@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as HealthRouteImport } from './routes/health'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
@@ -17,6 +18,11 @@ import { Route as AuthLoginRouteImport } from './routes/_auth/login'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ProtectedDashboardDashboardRouteImport } from './routes/_protected/_dashboard/dashboard'
 
+const HealthRoute = HealthRouteImport.update({
+  id: '/health',
+  path: '/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProtectedRoute = ProtectedRouteImport.update({
   id: '/_protected',
   getParentRoute: () => rootRouteImport,
@@ -53,12 +59,14 @@ const ProtectedDashboardDashboardRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/health': typeof HealthRoute
   '/login': typeof AuthLoginRoute
   '/dashboard': typeof ProtectedDashboardDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/health': typeof HealthRoute
   '/login': typeof AuthLoginRoute
   '/dashboard': typeof ProtectedDashboardDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
   '/_protected': typeof ProtectedRouteWithChildren
+  '/health': typeof HealthRoute
   '/_auth/login': typeof AuthLoginRoute
   '/_protected/_dashboard': typeof ProtectedDashboardRouteWithChildren
   '/_protected/_dashboard/dashboard': typeof ProtectedDashboardDashboardRoute
@@ -75,14 +84,15 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/dashboard' | '/api/auth/$'
+  fullPaths: '/' | '/health' | '/login' | '/dashboard' | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/dashboard' | '/api/auth/$'
+  to: '/' | '/health' | '/login' | '/dashboard' | '/api/auth/$'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/_protected'
+    | '/health'
     | '/_auth/login'
     | '/_protected/_dashboard'
     | '/_protected/_dashboard/dashboard'
@@ -93,11 +103,19 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
   ProtectedRoute: typeof ProtectedRouteWithChildren
+  HealthRoute: typeof HealthRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/health': {
+      id: '/health'
+      path: '/health'
+      fullPath: '/health'
+      preLoaderRoute: typeof HealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_protected': {
       id: '/_protected'
       path: ''
@@ -187,6 +205,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
   ProtectedRoute: ProtectedRouteWithChildren,
+  HealthRoute: HealthRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
