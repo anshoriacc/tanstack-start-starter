@@ -8,6 +8,7 @@ import {
 } from '@tabler/icons-react'
 
 import { useGetCurrentUserQuery, useGetSessionQuery } from '@/hooks/api/auth'
+import { Badge } from '@/components/ui/badge'
 import {
   Card,
   CardContent,
@@ -24,7 +25,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Badge } from '@/components/ui/badge'
 import {
   ChartContainer,
   ChartTooltip,
@@ -36,6 +36,9 @@ import {
 
 export const Route = createFileRoute('/_protected/_dashboard/dashboard')({
   component: DashboardPage,
+  staticData: {
+    breadcrumb: 'Dashboard',
+  },
 })
 
 const departmentData = [
@@ -230,7 +233,7 @@ function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={barChartConfig} className="min-h-[300px]">
+            <ChartContainer config={barChartConfig} className="min-h-75">
               <BarChart accessibilityLayer data={departmentData}>
                 <CartesianGrid vertical={false} />
                 <XAxis
@@ -269,7 +272,7 @@ function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={pieChartConfig} className="min-h-[300px]">
+            <ChartContainer config={pieChartConfig} className="min-h-75">
               <PieChart>
                 <ChartTooltip content={<ChartTooltipContent />} />
                 <Pie

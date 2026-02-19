@@ -108,10 +108,7 @@ const navs = [
 
 export const AppSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
   return (
-    <Sidebar
-      className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
-      {...props}
-    >
+    <Sidebar {...props}>
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-3">
           <img src="/logo192.png" alt="Logo" className="h-8 w-8" />

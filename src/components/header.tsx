@@ -1,7 +1,8 @@
+import { useMatches, Link } from '@tanstack/react-router'
 import { IconLogout, IconChevronDown } from '@tabler/icons-react'
 
-import { cn } from '@/lib/utils'
-import { useLogoutMutation } from '@/hooks/api/auth'
+import { cn, getInitials } from '@/lib/utils'
+import { useGetSessionQuery, useLogoutMutation } from '@/hooks/api/auth'
 import { SidebarTrigger, useSidebar } from './ui/sidebar'
 import { Avatar, AvatarFallback } from './ui/avatar'
 import { Separator } from './ui/separator'
@@ -23,10 +24,66 @@ import {
   DropdownMenuSeparator,
 } from './ui/dropdown-menu'
 import { Button } from './ui/button'
+import { TruncatedText } from './ui/truncated-text'
+
+interface BreadcrumbItemData {
+  label: string
+  path: string
+  isLast: boolean
+}
+
+type BreadcrumbStaticData = {
+  breadcrumb?: string
+}
+
+function useBreadcrumbs(): BreadcrumbItemData[] {
+  const matches = useMatches()
+
+  return matches
+    .filter(
+      (match) =>
+        (match.staticData as BreadcrumbStaticData | undefined)?.breadcrumb,
+    )
+    .map((match, _index, filteredMatches) => ({
+      label: (match.staticData as BreadcrumbStaticData).breadcrumb!,
+      path: match.pathname,
+      isLast: _index === filteredMatches.length - 1,
+    }))
+}
+
+function DynamicBreadcrumbs() {
+  const breadcrumbs = useBreadcrumbs()
+
+  if (breadcrumbs.length === 0) {
+    return null
+  }
+
+  return (
+    <Breadcrumb>
+      <BreadcrumbList>
+        {breadcrumbs.map((crumb) => (
+          <BreadcrumbItem key={crumb.path}>
+            {crumb.isLast ? (
+              <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+            ) : (
+              <BreadcrumbLink render={<Link to={crumb.path} />}>
+                {crumb.label}
+              </BreadcrumbLink>
+            )}
+            {!crumb.isLast && <BreadcrumbSeparator />}
+          </BreadcrumbItem>
+        ))}
+      </BreadcrumbList>
+    </Breadcrumb>
+  )
+}
 
 export const Header = () => {
   const { state } = useSidebar()
   const isCollapsed = state === 'collapsed'
+
+  const sessionQuery = useGetSessionQuery()
+  const user = sessionQuery.data?.user
 
   const logoutMutation = useLogoutMutation()
 
@@ -35,7 +92,7 @@ export const Header = () => {
   }
 
   return (
-    <header className="bg-background fixed w-full top-0 z-1 flex h-(--header-height) items-center justify-between gap-2 border-b px-4">
+    <header className="bg-background sticky top-0 z-1 flex h-(--header-height) items-center justify-between gap-2 border-b px-4">
       <div className="flex h-full flex-1 items-center gap-2">
         <div
           className={cn(
@@ -46,28 +103,22 @@ export const Header = () => {
           <SidebarTrigger className="-ml-1" />
         </div>
         <Separator orientation="vertical" />
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="#">Build Your Application</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator className="hidden md:block" />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-            </BreadcrumbItem>
-          </BreadcrumbList>
-        </Breadcrumb>
+        <DynamicBreadcrumbs />
       </div>
 
       <DropdownMenu>
         <DropdownMenuTrigger
           render={
-            <Button variant="ghost" size="lg" className="h-12">
+            <Button variant="ghost" size="lg" className="h-12 max-w-50">
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarFallback className="rounded-lg">AA</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {getInitials(user?.name)}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">Administrator</span>
+                <TruncatedText className="font-medium">
+                  {user?.name}
+                </TruncatedText>
               </div>
               <IconChevronDown className="ml-auto size-4" />
             </Button>
@@ -83,11 +134,17 @@ export const Header = () => {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarFallback className="rounded-lg">AA</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {getInitials(user?.name)}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Administrator</span>
-                  <span className="truncate text-xs">admin@istrat.or</span>
+                  <TruncatedText className="font-medium">
+                    {user?.name}
+                  </TruncatedText>
+                  <TruncatedText className="text-xs">
+                    {user?.email}
+                  </TruncatedText>
                 </div>
               </div>
             </DropdownMenuLabel>
