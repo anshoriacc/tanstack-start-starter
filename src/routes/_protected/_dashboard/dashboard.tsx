@@ -201,7 +201,7 @@ function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <pre className="bg-muted max-h-100 text-muted-foreground w-full overflow-x-auto rounded-lg p-4 text-xs">
+            <pre className="bg-muted text-muted-foreground max-h-100 w-full overflow-x-auto rounded-lg p-4 text-xs">
               {JSON.stringify(sessionQuery.data, null, 2)}
             </pre>
           </CardContent>
@@ -213,7 +213,7 @@ function DashboardPage() {
             <CardDescription>Authenticated user details</CardDescription>
           </CardHeader>
           <CardContent>
-            <pre className="bg-muted max-h-100 text-muted-foreground w-full overflow-x-auto rounded-lg p-4 text-xs">
+            <pre className="bg-muted text-muted-foreground max-h-100 w-full overflow-x-auto rounded-lg p-4 text-xs">
               {JSON.stringify(currentUserQuery.data, null, 2)}
             </pre>
           </CardContent>

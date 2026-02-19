@@ -59,11 +59,11 @@ function LoginPage() {
   return (
     <main
       className={cn(
-        'flex flex-col min-h-screen items-center gap-6 p-4',
+        'flex min-h-screen flex-col items-center gap-6 p-4',
         'bg-[linear-gradient(to_right,var(--sidebar)_1px,transparent_1px),linear-gradient(to_bottom,var(--sidebar)_1px,transparent_1px)] bg-size-[1rem_1rem]',
       )}
     >
-      <div className="flex-1 flex-col w-full flex items-center justify-center">
+      <div className="flex w-full flex-1 flex-col items-center justify-center">
         <Card className="w-full max-w-sm">
           <CardHeader>
             <CardTitle>Login</CardTitle>
@@ -145,7 +145,7 @@ function LoginPage() {
                 </form.Field>
 
                 {loginMutation.isError && (
-                  <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+                  <div className="bg-destructive/10 text-destructive rounded-md p-3 text-sm">
                     {'error' in loginMutation.error &&
                       typeof loginMutation.error.error === 'string' &&
                       loginMutation.error.error}

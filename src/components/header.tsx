@@ -35,8 +35,8 @@ export const Header = () => {
   }
 
   return (
-    <header className="flex h-16 items-center justify-between gap-2 border-b px-4">
-      <div className="flex h-full items-center gap-2 flex-1">
+    <header className="bg-background fixed w-full top-0 z-1 flex h-(--header-height) items-center justify-between gap-2 border-b px-4">
+      <div className="flex h-full flex-1 items-center gap-2">
         <div
           className={cn(
             'sidebar-trigger-zone max-w-max',

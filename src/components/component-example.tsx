@@ -280,7 +280,7 @@ const ThemeToggleExample = () => {
           />
           <label
             htmlFor="theme-light"
-            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary cursor-pointer transition-colors"
+            className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary flex cursor-pointer flex-col items-center justify-between rounded-md border-2 p-3 transition-colors"
           >
             <IconSun className="mb-2 size-5" />
             <span className="text-xs font-medium">Light</span>
@@ -294,7 +294,7 @@ const ThemeToggleExample = () => {
           />
           <label
             htmlFor="theme-dark"
-            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary cursor-pointer transition-colors"
+            className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary flex cursor-pointer flex-col items-center justify-between rounded-md border-2 p-3 transition-colors"
           >
             <IconMoon className="mb-2 size-5" />
             <span className="text-xs font-medium">Dark</span>
@@ -308,7 +308,7 @@ const ThemeToggleExample = () => {
           />
           <label
             htmlFor="theme-system"
-            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary cursor-pointer transition-colors"
+            className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary flex cursor-pointer flex-col items-center justify-between rounded-md border-2 p-3 transition-colors"
           >
             <IconDeviceDesktop className="mb-2 size-5" />
             <span className="text-xs font-medium">System</span>
@@ -494,7 +494,7 @@ const CardExample = () => {
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogMedia>
-                  <IconBriefcase className="size-8 text-primary" />
+                  <IconBriefcase className="text-primary size-8" />
                 </AlertDialogMedia>
                 <AlertDialogTitle>Assign New Task</AlertDialogTitle>
                 <AlertDialogDescription>
@@ -1106,7 +1106,7 @@ const CommandExample = () => {
 function EmptyStateExample() {
   return (
     <ExampleCard title="Empty State">
-      <Empty className="border rounded-lg">
+      <Empty className="rounded-lg border">
         <EmptyHeader>
           <EmptyMedia variant="icon">
             <IconCheck className="size-6" />
@@ -1280,7 +1280,7 @@ interface ExampleCardProps {
 const ExampleCard = ({ title, children, className }: ExampleCardProps) => {
   return (
     <div className={cn('break-inside-avoid space-y-3', className)}>
-      <h3 className="text-muted-foreground text-xs font-medium uppercase tracking-wider">
+      <h3 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
         {title}
       </h3>
       <div className="bg-card text-card-foreground rounded-lg border p-4 shadow-sm">
