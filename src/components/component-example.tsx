@@ -28,20 +28,26 @@ import {
 } from '@tabler/icons-react'
 
 import { cn } from '@/lib/utils'
-import { useGetSessionQuery, useGetCurrentUserQuery } from '@/hooks/api/auth'
 import { type TTheme, useSetTheme, useTheme } from '@/stores/theme'
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { useGetSessionQuery, useGetCurrentUserQuery } from '@/hooks/api/auth'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
+import { CommandPaletteButton } from '@/components/command-palette'
 import { ButtonGroup } from '@/components/ui/button-group'
 import { Separator } from '@/components/ui/separator'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Kbd, KbdGroup } from '@/components/ui/kbd'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Textarea } from '@/components/ui/textarea'
+import { Button } from '@/components/ui/button'
 import { Toggle } from '@/components/ui/toggle'
+import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
+import { Input } from '@/components/ui/input'
+import { DatePicker } from '@/components/ui/date-picker'
+import { MotionItem } from './ui/motion'
 import {
   Accordion,
   AccordionContent,
@@ -81,7 +87,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb'
-import { Button } from '@/components/ui/button'
 import {
   Card,
   CardContent,
@@ -99,7 +104,6 @@ import {
   ComboboxItem,
   ComboboxList,
 } from '@/components/ui/combobox'
-import { CommandPaletteButton } from '@/components/command-palette'
 import {
   Dialog,
   DialogClose,
@@ -126,7 +130,6 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from '@/components/ui/empty'
-import { Input } from '@/components/ui/input'
 import {
   InputGroup,
   InputGroupAddon,
@@ -169,7 +172,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet'
-import { Switch } from '@/components/ui/switch'
 import {
   Table,
   TableBody,
@@ -280,7 +282,7 @@ const ThemeToggleExample = () => {
           />
           <label
             htmlFor="theme-light"
-            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary cursor-pointer transition-colors"
+            className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary flex cursor-pointer flex-col items-center justify-between rounded-md border-2 p-3 transition-colors"
           >
             <IconSun className="mb-2 size-5" />
             <span className="text-xs font-medium">Light</span>
@@ -294,7 +296,7 @@ const ThemeToggleExample = () => {
           />
           <label
             htmlFor="theme-dark"
-            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary cursor-pointer transition-colors"
+            className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary flex cursor-pointer flex-col items-center justify-between rounded-md border-2 p-3 transition-colors"
           >
             <IconMoon className="mb-2 size-5" />
             <span className="text-xs font-medium">Dark</span>
@@ -308,7 +310,7 @@ const ThemeToggleExample = () => {
           />
           <label
             htmlFor="theme-system"
-            className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-3 hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary cursor-pointer transition-colors"
+            className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary flex cursor-pointer flex-col items-center justify-between rounded-md border-2 p-3 transition-colors"
           >
             <IconDeviceDesktop className="mb-2 size-5" />
             <span className="text-xs font-medium">System</span>
@@ -321,7 +323,7 @@ const ThemeToggleExample = () => {
 
 export const ComponentExample = () => {
   return (
-    <div className="columns-1 gap-6 space-y-6 p-6 md:columns-2 lg:columns-3">
+    <MotionItem className="columns-1 gap-6 space-y-6 p-6 md:columns-2 lg:columns-3">
       <UserProfileExample />
       <ThemeToggleExample />
       <BreadcrumbExample />
@@ -336,7 +338,7 @@ export const ComponentExample = () => {
       <EmptyStateExample />
       <ToggleTooltipExample />
       <PaginationExample />
-    </div>
+    </MotionItem>
   )
 }
 
@@ -494,7 +496,7 @@ const CardExample = () => {
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogMedia>
-                  <IconBriefcase className="size-8 text-primary" />
+                  <IconBriefcase className="text-primary size-8" />
                 </AlertDialogMedia>
                 <AlertDialogTitle>Assign New Task</AlertDialogTitle>
                 <AlertDialogDescription>
@@ -931,6 +933,8 @@ const TableExample = () => {
 
 const DialogSheetExample = () => {
   const [sheetOpen, setSheetOpen] = React.useState(false)
+  const [startDate, setStartDate] = React.useState<Date | undefined>()
+  const [endDate, setEndDate] = React.useState<Date | undefined>()
 
   return (
     <ExampleCard title="Dialog & Sheet">
@@ -1022,11 +1026,19 @@ const DialogSheetExample = () => {
               </Field>
               <Field>
                 <FieldLabel>Start Date</FieldLabel>
-                <Input type="date" />
+                <DatePicker
+                  date={startDate}
+                  onDateChange={setStartDate}
+                  placeholder="Select start date"
+                />
               </Field>
               <Field>
                 <FieldLabel>End Date</FieldLabel>
-                <Input type="date" />
+                <DatePicker
+                  date={endDate}
+                  onDateChange={setEndDate}
+                  placeholder="Select end date"
+                />
               </Field>
               <Field>
                 <FieldLabel>Reason</FieldLabel>
@@ -1106,7 +1118,7 @@ const CommandExample = () => {
 function EmptyStateExample() {
   return (
     <ExampleCard title="Empty State">
-      <Empty className="border rounded-lg">
+      <Empty className="rounded-lg border">
         <EmptyHeader>
           <EmptyMedia variant="icon">
             <IconCheck className="size-6" />
@@ -1280,7 +1292,7 @@ interface ExampleCardProps {
 const ExampleCard = ({ title, children, className }: ExampleCardProps) => {
   return (
     <div className={cn('break-inside-avoid space-y-3', className)}>
-      <h3 className="text-muted-foreground text-xs font-medium uppercase tracking-wider">
+      <h3 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
         {title}
       </h3>
       <div className="bg-card text-card-foreground rounded-lg border p-4 shadow-sm">

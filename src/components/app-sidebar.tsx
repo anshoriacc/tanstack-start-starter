@@ -112,7 +112,7 @@ export const AppSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-3">
           <img src="/logo192.png" alt="Logo" className="h-8 w-8" />
-          <span className="font-semibold text-lg">Dashboard</span>
+          <span className="text-lg font-semibold">Dashboard</span>
         </div>
       </SidebarHeader>
       <SidebarContent className="gap-0">

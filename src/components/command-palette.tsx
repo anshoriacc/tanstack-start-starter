@@ -98,7 +98,7 @@ export function CommandPaletteButton() {
   return (
     <button
       type="button"
-      className="inline-flex items-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4 w-full justify-start text-muted-foreground"
+      className="focus-visible:ring-ring ring-offset-background border-input hover:bg-accent hover:text-accent-foreground text-muted-foreground inline-flex h-10 w-full items-center justify-start rounded-md border px-4 py-2 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
       onClick={() => setOpen(true)}
     >
       <IconSearch className="mr-2 size-4" />

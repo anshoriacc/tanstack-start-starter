@@ -10,12 +10,15 @@ export const Route = createFileRoute('/_protected/_dashboard')({
 
 function DashboardLayout() {
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <Header />
-        <Outlet />
-      </SidebarInset>
-    </SidebarProvider>
+    <div className="[--header-height:calc(--spacing(16))]">
+      <SidebarProvider>
+        <AppSidebar />
+
+        <SidebarInset>
+          <Header />
+          <Outlet />
+        </SidebarInset>
+      </SidebarProvider>
+    </div>
   )
 }
