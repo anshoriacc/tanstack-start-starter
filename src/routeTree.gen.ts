@@ -14,7 +14,7 @@ import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ProtectedDashboardRouteImport } from './routes/_protected/_dashboard'
-import { Route as AuthLoginRouteImport } from './routes/_auth/login'
+import { Route as AuthLoginIndexRouteImport } from './routes/_auth/login/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ProtectedDashboardDashboardRouteImport } from './routes/_protected/_dashboard/dashboard'
 
@@ -40,9 +40,9 @@ const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
   id: '/_dashboard',
   getParentRoute: () => ProtectedRoute,
 } as any)
-const AuthLoginRoute = AuthLoginRouteImport.update({
-  id: '/login',
-  path: '/login',
+const AuthLoginIndexRoute = AuthLoginIndexRouteImport.update({
+  id: '/login/',
+  path: '/login/',
   getParentRoute: () => AuthRoute,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -60,16 +60,16 @@ const ProtectedDashboardDashboardRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/health': typeof HealthRoute
-  '/login': typeof AuthLoginRoute
   '/dashboard': typeof ProtectedDashboardDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/login/': typeof AuthLoginIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/health': typeof HealthRoute
-  '/login': typeof AuthLoginRoute
   '/dashboard': typeof ProtectedDashboardDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/login': typeof AuthLoginIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -77,26 +77,26 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/_protected': typeof ProtectedRouteWithChildren
   '/health': typeof HealthRoute
-  '/_auth/login': typeof AuthLoginRoute
   '/_protected/_dashboard': typeof ProtectedDashboardRouteWithChildren
   '/_protected/_dashboard/dashboard': typeof ProtectedDashboardDashboardRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/_auth/login/': typeof AuthLoginIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/health' | '/login' | '/dashboard' | '/api/auth/$'
+  fullPaths: '/' | '/health' | '/dashboard' | '/api/auth/$' | '/login/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/health' | '/login' | '/dashboard' | '/api/auth/$'
+  to: '/' | '/health' | '/dashboard' | '/api/auth/$' | '/login'
   id:
     | '__root__'
     | '/'
     | '/_auth'
     | '/_protected'
     | '/health'
-    | '/_auth/login'
     | '/_protected/_dashboard'
     | '/_protected/_dashboard/dashboard'
     | '/api/auth/$'
+    | '/_auth/login/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -144,11 +144,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedDashboardRouteImport
       parentRoute: typeof ProtectedRoute
     }
-    '/_auth/login': {
-      id: '/_auth/login'
+    '/_auth/login/': {
+      id: '/_auth/login/'
       path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof AuthLoginRouteImport
+      fullPath: '/login/'
+      preLoaderRoute: typeof AuthLoginIndexRouteImport
       parentRoute: typeof AuthRoute
     }
     '/api/auth/$': {
@@ -169,11 +169,11 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthRouteChildren {
-  AuthLoginRoute: typeof AuthLoginRoute
+  AuthLoginIndexRoute: typeof AuthLoginIndexRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
-  AuthLoginRoute: AuthLoginRoute,
+  AuthLoginIndexRoute: AuthLoginIndexRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

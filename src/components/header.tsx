@@ -4,7 +4,7 @@ import { IconLogout, IconChevronDown } from '@tabler/icons-react'
 import { cn, getInitials } from '@/lib/utils'
 import { useGetSessionQuery, useLogoutMutation } from '@/hooks/api/auth'
 import { SidebarTrigger, useSidebar } from './ui/sidebar'
-import { Avatar, AvatarFallback } from './ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Separator } from './ui/separator'
 import {
   Breadcrumb,
@@ -111,6 +111,7 @@ export const Header = () => {
           render={
             <Button variant="ghost" size="lg" className="h-12 max-w-50">
               <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarImage src={user?.image} />
                 <AvatarFallback className="rounded-lg">
                   {getInitials(user?.name)}
                 </AvatarFallback>
@@ -134,6 +135,7 @@ export const Header = () => {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
+                  <AvatarImage src={user?.image} />
                   <AvatarFallback className="rounded-lg">
                     {getInitials(user?.name)}
                   </AvatarFallback>
