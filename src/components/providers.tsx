@@ -8,7 +8,7 @@ type Props = {
   theme: TTheme
 }
 
-export function Providers({ theme, children }: Props) {
+export const Providers = ({ theme, children }: Props) => {
   // Listen for OS-level theme changes
   React.useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')

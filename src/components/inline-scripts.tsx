@@ -3,12 +3,12 @@
  * Reads the cookie, resolves system preference, applies the class,
  * and stashes the result on `window.__INITIAL_THEME__` for hydration.
  */
-export function generateThemeScript(
+export const generateThemeScript = (
   theme: 'light' | 'dark' | 'system',
-): string {
+): string =>
   // This script is inlined into <head> and runs synchronously before paint.
   // It MUST be self-contained — no external references.
-  return `(function() {
+  `(function() {
     try {
       const theme = '${theme}';
       let resolvedTheme;
@@ -31,4 +31,3 @@ export function generateThemeScript(
       // Silently fail
     }
   })()`
-}
