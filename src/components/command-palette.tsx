@@ -20,7 +20,7 @@ import {
 } from '@/components/ui/command'
 import { useCommandOpen, useCommandSetOpen } from '@/stores/command'
 
-export function GlobalCommandPalette() {
+export const GlobalCommandPalette = () => {
   const isOpen = useCommandOpen()
   const setOpen = useCommandSetOpen()
 
@@ -92,7 +92,7 @@ export function GlobalCommandPalette() {
   )
 }
 
-export function CommandPaletteButton() {
+export const CommandPaletteButton = () => {
   const setOpen = useCommandSetOpen()
 
   return (
