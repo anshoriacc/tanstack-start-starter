@@ -4,7 +4,7 @@ A modern, type-safe full-stack React boilerplate with authentication, routing, a
 
 ## Demo
 
-Preview: [http://starter.anshori.com/](http://starter.anshori.com/)
+Preview: [https://starter.anshori.com/](https://starter.anshori.com/)
 
 ## Tech Stack
 
