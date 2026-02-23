@@ -12,7 +12,7 @@ function DashboardLayout() {
   return (
     <div className="[--header-height:calc(--spacing(16))]">
       <SidebarProvider>
-        <AppSidebar />
+        <AppSidebar variant="floating"/>
 
         <SidebarInset>
           <Header />
