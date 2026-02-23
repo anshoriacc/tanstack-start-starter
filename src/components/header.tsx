@@ -3,9 +3,13 @@ import { IconLogout, IconChevronDown } from '@tabler/icons-react'
 
 import { cn, getInitials } from '@/lib/utils'
 import { useGetSessionQuery, useLogoutMutation } from '@/hooks/api/auth'
-import { SidebarTrigger, useSidebar } from './ui/sidebar'
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { SidebarTrigger, useSidebar } from './ui/sidebar'
+import { TruncatedText } from './ui/truncated-text'
 import { Separator } from './ui/separator'
+import { Kbd, KbdGroup } from './ui/kbd'
+import { Button } from './ui/button'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -23,8 +27,6 @@ import {
   DropdownMenuContent,
   DropdownMenuSeparator,
 } from './ui/dropdown-menu'
-import { Button } from './ui/button'
-import { TruncatedText } from './ui/truncated-text'
 
 interface BreadcrumbItemData {
   label: string
@@ -93,14 +95,23 @@ export const Header = () => {
 
   return (
     <header className="bg-background sticky top-0 z-1 flex h-(--header-height) items-center justify-between gap-2 border-b px-4">
-      <div className="flex h-full flex-1 items-center gap-2">
+      <div className="flex flex-1 items-center gap-2">
         <div
           className={cn(
             'sidebar-trigger-zone max-w-max',
             isCollapsed && 'sidebar-trigger-zone--collapsed',
           )}
         >
-          <SidebarTrigger className="-ml-1" />
+          <Tooltip>
+            <TooltipTrigger render={<SidebarTrigger size="icon-lg" />} />
+            <TooltipContent>
+              Toggle sidebar{' '}
+              <KbdGroup>
+                <Kbd>⌘</Kbd>
+                <Kbd>B</Kbd>
+              </KbdGroup>
+            </TooltipContent>
+          </Tooltip>
         </div>
         <Separator orientation="vertical" />
         <DynamicBreadcrumbs />
