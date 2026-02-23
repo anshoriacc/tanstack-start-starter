@@ -29,11 +29,37 @@ function resolveTheme(
   return theme
 }
 
+function createTransitionDisablingStylesheet(): HTMLStyleElement {
+  const css = document.createElement('style')
+  css.type = 'text/css'
+  css.appendChild(
+    document.createTextNode(
+      `*, *::before, *::after {
+        transition: none !important;
+      }`,
+    ),
+  )
+  return css
+}
+
+function disableTransitions(): HTMLStyleElement {
+  const css = createTransitionDisablingStylesheet()
+  document.head.appendChild(css)
+  return css
+}
+
+function enableTransitions(css: HTMLStyleElement): void {
+  window.getComputedStyle(css).opacity
+  document.head.removeChild(css)
+}
+
 export function applyTheme(resolvedTheme: TResolvedTheme) {
   if (typeof document === 'undefined') return
   const html = document.documentElement
+  const transitionsDisabled = disableTransitions()
   html.classList.remove('light', 'dark')
   html.classList.add(resolvedTheme)
+  enableTransitions(transitionsDisabled)
 }
 
 export const useThemeStore = create<ThemeStore>((set) => ({
