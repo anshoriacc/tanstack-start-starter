@@ -2,6 +2,8 @@ import React from 'react'
 import type { TTheme } from '@/server/theme'
 import { ThemeContext } from '@/lib/theme-context'
 import { useThemeStore, getSystemTheme, applyTheme } from '@/stores/theme'
+import { GlobalCommandPalette } from './command-palette'
+import { ThemeHotkey } from '@/components/theme-hotkey'
 
 type Props = {
   children: React.ReactNode
@@ -27,5 +29,11 @@ export const Providers = ({ theme, children }: Props) => {
     return () => mediaQuery.removeEventListener('change', handleChange)
   }, [theme])
 
-  return <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
+  return (
+    <ThemeContext.Provider value={theme}>
+      {children}
+      <ThemeHotkey />
+      <GlobalCommandPalette />
+    </ThemeContext.Provider>
+  )
 }

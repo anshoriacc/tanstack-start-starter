@@ -1,7 +1,10 @@
 import { IconDeviceImac, IconMoon, IconSun } from '@tabler/icons-react'
+
 import { Button } from './ui/button'
 import { ButtonGroup } from './ui/button-group'
 import { type TTheme, useSetTheme, useTheme } from '@/stores/theme'
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip'
+import { Kbd } from './ui/kbd'
 
 const themes: Array<{ value: TTheme; label: string; icon: typeof IconSun }> = [
   { value: 'system', label: 'System theme', icon: IconDeviceImac },
@@ -14,24 +17,35 @@ export const ToggleTheme = () => {
   const setTheme = useSetTheme()
 
   return (
-    <ButtonGroup aria-label="Toggle theme">
-      {themes.map((t) => {
-        const Icon = t.icon
-        const isActive = theme === t.value
-        return (
-          <Button
-            key={t.value}
-            variant="outline"
-            size="icon-sm"
-            aria-label={t.label}
-            aria-pressed={isActive}
-            onClick={() => setTheme(t.value)}
-            className={isActive ? 'bg-muted!' : 'bg-background!'}
-          >
-            <Icon className="size-4" />
-          </Button>
-        )
-      })}
-    </ButtonGroup>
+    <Tooltip>
+      <TooltipTrigger
+        render={
+          <ButtonGroup aria-label="Toggle theme">
+            {themes.map((t) => {
+              const Icon = t.icon
+              const isActive = theme === t.value
+              return (
+                <Button
+                  key={t.value}
+                  variant="outline"
+                  size="icon-sm"
+                  aria-label={t.label}
+                  aria-pressed={isActive}
+                  onClick={() => setTheme(t.value)}
+                  className={isActive ? 'bg-muted!' : 'bg-background!'}
+                >
+                  <Icon className="size-4" />
+                </Button>
+              )
+            })}
+          </ButtonGroup>
+        }
+      />
+      <TooltipContent>
+        <span>
+          Toggle theme <Kbd>T</Kbd>
+        </span>
+      </TooltipContent>
+    </Tooltip>
   )
 }
