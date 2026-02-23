@@ -15,7 +15,6 @@ import appCss from '../styles.css?url'
 import { useResolvedTheme } from '@/stores/theme'
 import { getThemeServerFn } from '@/server/theme'
 import { getSessionQueryOptions } from '@/hooks/api/auth'
-import { GlobalCommandPalette } from '@/components/command-palette'
 import { generateThemeScript } from '@/components/inline-scripts'
 import { Providers } from '@/components/providers'
 import { NotFound } from '@/components/not-found'
@@ -105,8 +104,6 @@ function RootDocument({ children }: RootDocumentProps) {
             hotkeysDevtoolsPlugin(),
           ]}
         />
-
-        <GlobalCommandPalette />
 
         <Toaster theme={resolvedTheme} richColors />
 

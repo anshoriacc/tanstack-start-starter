@@ -1,7 +1,8 @@
 import { create } from 'zustand'
+
 import {
-  type TResolvedTheme,
   type TTheme,
+  type TResolvedTheme,
   setThemeServerFn,
 } from '@/server/theme'
 import { useLoaderTheme } from '@/lib/theme-context'
@@ -105,3 +106,13 @@ export function useResolvedTheme(): TResolvedTheme {
 }
 
 export const useSetTheme = () => useThemeStore((s) => s.setTheme)
+
+export const useToggleTheme = () => {
+  const resolvedTheme = useResolvedTheme()
+  const setTheme = useSetTheme()
+
+  return () => {
+    const newTheme: TTheme = resolvedTheme === 'dark' ? 'light' : 'dark'
+    setTheme(newTheme)
+  }
+}
