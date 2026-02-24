@@ -11,13 +11,16 @@ export const Route = createFileRoute('/_protected/_dashboard')({
 function DashboardLayout() {
   return (
     <div className="[--header-height:calc(--spacing(16))]">
-      <SidebarProvider>
-        <AppSidebar variant="floating"/>
+      <SidebarProvider className="flex flex-col">
+        <Header />
 
-        <SidebarInset>
-          <Header />
-          <Outlet />
-        </SidebarInset>
+        <div className="flex-1 flex">
+          <AppSidebar variant="floating" />
+
+          <SidebarInset>
+            <Outlet />
+          </SidebarInset>
+        </div>
       </SidebarProvider>
     </div>
   )
