@@ -77,14 +77,25 @@ Follow these priority rules when writing or reviewing code:
 
 ### File Naming
 
-- Components: `PascalCase` (e.g., `LoginForm.tsx`)
-- Hooks: `camelCase` with `use` prefix (e.g., `useAuth.ts`)
-- Utils: `camelCase` (e.g., `query-client.ts`)
-- Routes: `kebab-case` (e.g., `login/index.tsx`)
+Use **kebab-case** for all file names, with these exceptions:
+
+**Exceptions:**
+- **Auto-generated files** - Keep as-is (e.g., `routeTree.gen.ts`)
+- **TanStack Router conventions** - Follow Router semantics:
+  - `__root.tsx` - Root route
+  - `_prefix` - Route layout groups
+  - `-components` - Route-specific component directories
+  - `index.tsx` - Route files
+
+**Examples:**
+- Components: `login-form.tsx`, `user-profile.tsx`
+- Hooks: `use-mobile.ts`, `use-auth.ts`
+- Utils: `query-client.ts`, `request-handler.ts`
+- Routes & folders: `login/`, `_protected/`, `-components/`
 
 ### Component Declaration
 
-- Page/layout/route components: use `function`
+- Page/layout/route/auto-generated components: use `function`
   ```tsx
   function LoginPage() { ... }
   function DashboardLayout() { ... }
@@ -130,13 +141,13 @@ src/routes/
 
 ## Auth Patterns
 
-### Client-Side Auth (useSession)
+### Client-Side Auth (useGetSessionQuery)
 
 ```tsx
-import { useSession } from '@/lib/auth/client'
+import { useGetSessionQuery } from '@/hooks/api/auth'
 
 const Profile = () => {
-  const { data: session, isLoading } = useSession()
+  const { data: session, isLoading } = useGetSessionQuery()
 
   if (isLoading) return <Skeleton />
   if (!session) return <Redirect to="/login" />
@@ -229,30 +240,6 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 
 <TanStackDevtools ... />
 ```
-
-## Testing
-
-Run tests with Vitest:
-
-```bash
-pnpm test
-```
-
-Test files should be colocated:
-
-```
-src/
-├── components/
-│   └── button/
-│       ├── button.tsx
-│       └── button.test.tsx
-```
-
-## Before Submitting Work
-
-1. Run `pnpm check` - lint & format
-2. Run `pnpm test` - ensure tests pass
-3. Verify no console errors in dev mode
 
 ## Additional Documentation
 
