@@ -92,3 +92,11 @@ API_BASE_URL=https://dummyjson.com
 | `pnpm lint`    | Lint code                |
 | `pnpm format`  | Format code              |
 | `pnpm check`   | Lint & format            |
+
+## Before Creating a PR
+
+Run the check command to ensure code quality:
+
+```bash
+pnpm check
+```

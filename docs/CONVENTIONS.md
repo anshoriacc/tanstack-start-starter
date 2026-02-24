@@ -280,4 +280,3 @@ describe('Button', () => {
 
 - [Architecture](./ARCHITECTURE.md) - High-level architecture
 - [Patterns](./PATTERNS.md) - Common patterns with examples
-- [Troubleshooting](./TROUBLESHOOTING.md) - Common issues and solutions

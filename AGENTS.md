@@ -12,6 +12,16 @@ This is a TanStack Start boilerplate with:
 - Better Auth (authentication)
 - TailwindCSS v4 + shadcn/ui components
 
+## Before Creating a PR
+
+Run the check command to ensure code quality:
+
+```bash
+pnpm check
+```
+
+Supported package managers: `pnpm`, `npm`, `yarn`, `bun`
+
 ## Performance Rules (Vercel Best Practices)
 
 Follow these priority rules when writing or reviewing code:
@@ -80,6 +90,7 @@ Follow these priority rules when writing or reviewing code:
 Use **kebab-case** for all file names, with these exceptions:
 
 **Exceptions:**
+
 - **Auto-generated files** - Keep as-is (e.g., `routeTree.gen.ts`)
 - **TanStack Router conventions** - Follow Router semantics:
   - `__root.tsx` - Root route
@@ -88,6 +99,7 @@ Use **kebab-case** for all file names, with these exceptions:
   - `index.tsx` - Route files
 
 **Examples:**
+
 - Components: `login-form.tsx`, `user-profile.tsx`
 - Hooks: `use-mobile.ts`, `use-auth.ts`
 - Utils: `query-client.ts`, `request-handler.ts`

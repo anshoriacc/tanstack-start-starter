@@ -169,4 +169,3 @@ API_BASE_URL=https://dummyjson.com
 
 - [Conventions](./CONVENTIONS.md) - Code conventions and patterns
 - [Patterns](./PATTERNS.md) - Common patterns with examples
-- [Troubleshooting](./TROUBLESHOOTING.md) - Common issues and solutions
