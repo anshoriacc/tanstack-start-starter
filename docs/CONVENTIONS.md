@@ -4,14 +4,23 @@ This document outlines the code conventions and patterns used in this project.
 
 ## File Naming
 
-| Type       | Convention                   | Example                            |
-| ---------- | ---------------------------- | ---------------------------------- |
-| Components | PascalCase                   | `LoginForm.tsx`, `Button.tsx`      |
-| Hooks      | camelCase with `use` prefix  | `useAuth.ts`, `useMobile.ts`       |
-| Utils      | camelCase                    | `query-client.ts`, `utils.ts`      |
-| Routes     | kebab-case                   | `login/index.tsx`, `dashboard.tsx` |
-| Stores     | camelCase                    | `theme.ts`, `command.ts`           |
-| Schemas    | camelCase with schema suffix | `auth.ts`, `user.ts`               |
+Use **kebab-case** for all file names, with these exceptions:
+
+- **Auto-generated files** - Keep as-is (e.g., `routeTree.gen.ts`)
+- **TanStack Router conventions** - Follow Router semantics:
+  - `__root.tsx` - Root route
+  - `_prefix` - Route layout groups
+  - `-components` - Route-specific component directories
+  - `index.tsx` - Route files
+
+| Type       | Convention                    | Example                                 |
+| ---------- | ----------------------------- | --------------------------------------- |
+| Components | kebab-case                    | `login-form.tsx`, `user-profile.tsx`    |
+| Hooks      | kebab-case with `use` prefix  | `use-mobile.ts`, `use-auth.ts`          |
+| Utils      | kebab-case                    | `query-client.ts`, `request-handler.ts` |
+| Routes     | kebab-case                    | `login/index.tsx`, `dashboard.tsx`      |
+| Stores     | kebab-case                    | `theme.ts`, `command.ts`                |
+| Schemas    | kebab-case with schema suffix | `auth.ts`, `user.ts`                    |
 
 ## Folder Structure
 
