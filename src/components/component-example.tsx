@@ -29,7 +29,7 @@ import {
 
 import { cn } from '@/lib/utils'
 import { type TTheme, useSetTheme, useTheme } from '@/stores/theme'
-import { useGetSessionQuery, useGetCurrentUserQuery } from '@/hooks/api/auth'
+import { useGetCurrentUserQuery, useGetSessionQuery } from '@/hooks/api/auth'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/field'
@@ -263,69 +263,69 @@ const UserProfileExample = () => {
   )
 }
 
-const ThemeToggleExample = () => {
-  const theme = useTheme()
-  const setTheme = useSetTheme()
+// const ThemeToggleExample = () => {
+//   const theme = useTheme()
+//   const setTheme = useSetTheme()
 
-  return (
-    <ExampleCard title="Radio Group">
-      <RadioGroup
-        value={theme}
-        onValueChange={(value) => setTheme(value as TTheme)}
-        className="grid grid-cols-3 gap-2"
-      >
-        <div>
-          <RadioGroupItem
-            value="light"
-            id="theme-light"
-            className="peer sr-only"
-          />
-          <label
-            htmlFor="theme-light"
-            className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary flex cursor-pointer flex-col items-center justify-between rounded-md border-2 p-3 transition-colors"
-          >
-            <IconSun className="mb-2 size-5" />
-            <span className="text-xs font-medium">Light</span>
-          </label>
-        </div>
-        <div>
-          <RadioGroupItem
-            value="dark"
-            id="theme-dark"
-            className="peer sr-only"
-          />
-          <label
-            htmlFor="theme-dark"
-            className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary flex cursor-pointer flex-col items-center justify-between rounded-md border-2 p-3 transition-colors"
-          >
-            <IconMoon className="mb-2 size-5" />
-            <span className="text-xs font-medium">Dark</span>
-          </label>
-        </div>
-        <div>
-          <RadioGroupItem
-            value="system"
-            id="theme-system"
-            className="peer sr-only"
-          />
-          <label
-            htmlFor="theme-system"
-            className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary flex cursor-pointer flex-col items-center justify-between rounded-md border-2 p-3 transition-colors"
-          >
-            <IconDeviceDesktop className="mb-2 size-5" />
-            <span className="text-xs font-medium">System</span>
-          </label>
-        </div>
-      </RadioGroup>
-    </ExampleCard>
-  )
-}
+//   return (
+//     <ExampleCard title="Radio Group">
+//       <RadioGroup
+//         value={theme}
+//         onValueChange={(value) => setTheme(value as TTheme)}
+//         className="grid grid-cols-3 gap-2"
+//       >
+//         <div>
+//           <RadioGroupItem
+//             value="light"
+//             id="theme-light"
+//             className="peer sr-only"
+//           />
+//           <label
+//             htmlFor="theme-light"
+//             className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary flex cursor-pointer flex-col items-center justify-between rounded-md border-2 p-3 transition-colors"
+//           >
+//             <IconSun className="mb-2 size-5" />
+//             <span className="text-xs font-medium">Light</span>
+//           </label>
+//         </div>
+//         <div>
+//           <RadioGroupItem
+//             value="dark"
+//             id="theme-dark"
+//             className="peer sr-only"
+//           />
+//           <label
+//             htmlFor="theme-dark"
+//             className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary flex cursor-pointer flex-col items-center justify-between rounded-md border-2 p-3 transition-colors"
+//           >
+//             <IconMoon className="mb-2 size-5" />
+//             <span className="text-xs font-medium">Dark</span>
+//           </label>
+//         </div>
+//         <div>
+//           <RadioGroupItem
+//             value="system"
+//             id="theme-system"
+//             className="peer sr-only"
+//           />
+//           <label
+//             htmlFor="theme-system"
+//             className="border-muted bg-popover hover:bg-accent hover:text-accent-foreground peer-aria-checked:border-primary flex cursor-pointer flex-col items-center justify-between rounded-md border-2 p-3 transition-colors"
+//           >
+//             <IconDeviceDesktop className="mb-2 size-5" />
+//             <span className="text-xs font-medium">System</span>
+//           </label>
+//         </div>
+//       </RadioGroup>
+//     </ExampleCard>
+//   )
+// }
 
 export const ComponentExample = () => {
   return (
     <MotionItem className="columns-1 gap-6 space-y-6 p-6 md:columns-2 lg:columns-3">
       <UserProfileExample />
-      <ThemeToggleExample />
+      {/* <ThemeToggleExample /> */}
       <BreadcrumbExample />
       <AlertExample />
       <CardExample />

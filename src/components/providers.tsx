@@ -1,7 +1,7 @@
 import React from 'react'
 import type { TTheme } from '@/server/theme'
 import { ThemeContext } from '@/lib/theme-context'
-import { useThemeStore, getSystemTheme, applyTheme } from '@/stores/theme'
+import { applyTheme, getSystemTheme, useThemeStore } from '@/stores/theme'
 import { GlobalCommandPalette } from './command-palette'
 import { ThemeHotkey } from '@/components/theme-hotkey'
 
@@ -32,7 +32,7 @@ export const Providers = ({ theme, children }: Props) => {
   return (
     <ThemeContext.Provider value={theme}>
       {children}
-      <ThemeHotkey />
+      {/* <ThemeHotkey /> */}
       <GlobalCommandPalette />
     </ThemeContext.Provider>
   )

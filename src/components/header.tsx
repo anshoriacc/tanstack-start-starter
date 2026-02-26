@@ -1,5 +1,5 @@
-import { useMatches, Link } from '@tanstack/react-router'
-import { IconLogout, IconChevronDown } from '@tabler/icons-react'
+import { Link, useMatches } from '@tanstack/react-router'
+import { IconChevronDown, IconLogout } from '@tabler/icons-react'
 
 import { cn, getInitials } from '@/lib/utils'
 import { useGetSessionQuery, useLogoutMutation } from '@/hooks/api/auth'
@@ -20,12 +20,12 @@ import {
 } from '@/components/ui/breadcrumb'
 import {
   DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuGroup,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
   DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from './ui/dropdown-menu'
 
 interface BreadcrumbItemData {
@@ -38,7 +38,7 @@ type BreadcrumbStaticData = {
   breadcrumb?: string
 }
 
-function useBreadcrumbs(): BreadcrumbItemData[] {
+function useBreadcrumbs(): Array<BreadcrumbItemData> {
   const matches = useMatches()
 
   return matches

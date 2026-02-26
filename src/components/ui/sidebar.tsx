@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { mergeProps } from '@base-ui/react/merge-props'
 import { useRender } from '@base-ui/react/use-render'
-import { cva, type VariantProps } from 'class-variance-authority'
+import { type VariantProps, cva } from 'class-variance-authority'
 import { IconLayoutSidebar } from '@tabler/icons-react'
 
 import { useIsMobile } from '@/hooks/use-mobile'
@@ -269,7 +269,7 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      <IconLayoutSidebar className="size-5"/>
+      <IconLayoutSidebar className="size-5" />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   )

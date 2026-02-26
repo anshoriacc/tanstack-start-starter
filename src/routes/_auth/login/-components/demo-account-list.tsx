@@ -1,23 +1,23 @@
 import { IconUsers } from '@tabler/icons-react'
 
-import { useGetUserListQuery, type TUser } from '@/hooks/api/user'
-import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
+import { type TUser, useGetUserListQuery } from '@/hooks/api/user'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-  DialogClose,
 } from '@/components/ui/dialog'
 import {
   Item,
   ItemContent,
-  ItemTitle,
   ItemDescription,
   ItemMedia,
+  ItemTitle,
 } from '@/components/ui/item'
 import { Button } from '@/components/ui/button'
 

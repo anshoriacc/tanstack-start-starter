@@ -1,4 +1,4 @@
-import { motion, useReducedMotion, type Variants } from 'motion/react'
+import { type Variants, motion, useReducedMotion } from 'motion/react'
 
 const containerVariants: Variants = {
   hidden: {},
