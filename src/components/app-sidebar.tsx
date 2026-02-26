@@ -1,34 +1,34 @@
 import React from 'react'
 import {
-  IconChevronRight,
-  IconLayoutDashboard,
-  IconUsers,
   IconBuilding,
   IconCalendar,
-  IconCreditCard,
   IconCash,
   IconChartBar,
+  IconChevronRight,
+  IconCreditCard,
+  IconLayoutDashboard,
   IconSettings,
+  IconUsers,
 } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
 
 import { ToggleTheme } from './toggle-theme'
 import {
+  Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-  Collapsible,
 } from './ui/collapsible'
 import {
   Sidebar,
-  SidebarMenu,
-  SidebarGroup,
-  SidebarHeader,
   SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarFooter,
 } from './ui/sidebar'
 
 const navs = [

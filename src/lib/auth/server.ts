@@ -3,7 +3,7 @@ import { customSession } from 'better-auth/plugins'
 import { tanstackStartCookies } from 'better-auth/tanstack-start'
 
 import { customCredentials } from './plugins'
-import { BETTER_AUTH_SECRET, BETTER_AUTH_BASE_URL } from '@/constants/env'
+import { BETTER_AUTH_BASE_URL, BETTER_AUTH_SECRET } from '@/constants/env'
 
 export const auth = betterAuth({
   secret: BETTER_AUTH_SECRET,

@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { CartesianGrid, BarChart, Bar, Pie, XAxis, PieChart } from 'recharts'
+import { Bar, BarChart, CartesianGrid, Pie, PieChart, XAxis } from 'recharts'
 import {
-  IconUsers,
   IconBuilding,
   IconCalendar,
   IconTrendingUp,
+  IconUsers,
 } from '@tabler/icons-react'
 
 import { useGetCurrentUserQuery, useGetSessionQuery } from '@/hooks/api/auth'
@@ -26,12 +26,12 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import {
+  type ChartConfig,
   ChartContainer,
+  ChartLegend,
+  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-  ChartLegendContent,
-  ChartLegend,
-  ChartConfig,
 } from '@/components/ui/chart'
 
 export const Route = createFileRoute('/_protected/_dashboard/dashboard')({

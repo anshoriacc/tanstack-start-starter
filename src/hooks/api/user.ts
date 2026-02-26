@@ -103,7 +103,7 @@ export type TUser = {
 }
 
 export type TGetUserListResponse = {
-  users: TUser[]
+  users: Array<TUser>
   total: number
   skip: number
   limit: number
