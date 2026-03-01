@@ -32,7 +32,7 @@ export const Providers = ({ theme, children }: Props) => {
   return (
     <ThemeContext.Provider value={theme}>
       {children}
-      {/* <ThemeHotkey /> */}
+      <ThemeHotkey />
       <GlobalCommandPalette />
     </ThemeContext.Provider>
   )
