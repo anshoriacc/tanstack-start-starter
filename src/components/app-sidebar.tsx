@@ -12,6 +12,7 @@ import {
 } from '@tabler/icons-react'
 import { Link } from '@tanstack/react-router'
 
+import { cn } from '@/lib/utils'
 import { ToggleTheme } from './toggle-theme'
 import {
   Collapsible,
@@ -30,6 +31,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from './ui/sidebar'
+
+type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
+  isHoverPreviewOpen?: boolean
+  onHoverPreviewEnter?: () => void
+  onHoverPreviewLeave?: () => void
+}
 
 const navs = [
   {
@@ -106,10 +113,22 @@ const navs = [
   },
 ]
 
-export const AppSidebar = (props: React.ComponentProps<typeof Sidebar>) => {
+export const AppSidebar = ({
+  isHoverPreviewOpen = false,
+  onHoverPreviewEnter,
+  onHoverPreviewLeave,
+  className,
+  ...props
+}: AppSidebarProps) => {
   return (
     <Sidebar
-      className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
+      className={cn(
+        'top-(--header-height) h-[calc(100svh-var(--header-height))]! data-[hover-preview-open=true]:!left-0',
+        className,
+      )}
+      data-hover-preview-open={isHoverPreviewOpen || undefined}
+      onMouseEnter={onHoverPreviewEnter}
+      onMouseLeave={onHoverPreviewLeave}
       {...props}
     >
       <SidebarHeader>

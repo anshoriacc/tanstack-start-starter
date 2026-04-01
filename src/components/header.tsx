@@ -38,6 +38,11 @@ type BreadcrumbStaticData = {
   breadcrumb?: string
 }
 
+type HeaderProps = {
+  onSidebarTriggerMouseEnter?: () => void
+  onSidebarTriggerMouseLeave?: () => void
+}
+
 function useBreadcrumbs(): Array<BreadcrumbItemData> {
   const matches = useMatches()
 
@@ -80,7 +85,10 @@ function DynamicBreadcrumbs() {
   )
 }
 
-export const Header = () => {
+export const Header = ({
+  onSidebarTriggerMouseEnter,
+  onSidebarTriggerMouseLeave,
+}: HeaderProps) => {
   const { state } = useSidebar()
   const isCollapsed = state === 'collapsed'
 
@@ -101,6 +109,8 @@ export const Header = () => {
             'sidebar-trigger-zone max-w-max',
             isCollapsed && 'sidebar-trigger-zone--collapsed',
           )}
+          onMouseEnter={onSidebarTriggerMouseEnter}
+          onMouseLeave={onSidebarTriggerMouseLeave}
         >
           <Tooltip>
             <TooltipTrigger render={<SidebarTrigger size="icon-lg" />} />
