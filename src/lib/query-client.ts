@@ -1,10 +1,10 @@
 import { ApiError } from '@/server/axios'
 import { AnyRouter } from '@tanstack/react-router'
 import {
-  isServer,
   QueryCache,
   QueryClient,
   defaultShouldDehydrateQuery,
+  environmentManager,
 } from '@tanstack/react-query'
 import { toast } from 'sonner'
 
@@ -25,7 +25,7 @@ function makeQueryClient() {
             routerRef.navigate({ to: '/login', replace: true })
           } else {
             toast.error('Session expired, please login again')
-            if (!isServer) window.location.href = '/login'
+            if (!environmentManager.isServer()) window.location.href = '/login'
           }
         }
       },
@@ -52,7 +52,7 @@ function makeQueryClient() {
 let browserQueryClient: QueryClient | undefined = undefined
 
 export function getQueryClient() {
-  if (isServer) {
+  if (environmentManager.isServer()) {
     return makeQueryClient()
   } else {
     if (!browserQueryClient) browserQueryClient = makeQueryClient()
