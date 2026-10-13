@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Calendar } from '@/components/ui/calendar'
 import {
   Popover,
+  PopoverBody,
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
@@ -40,13 +41,15 @@ export function DatePicker({
         <IconCalendar className="mr-2 size-4" />
         {date ? format(date, 'PPP') : <span>{placeholder}</span>}
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={onDateChange}
-          autoFocus
-        />
+      <PopoverContent className="w-auto">
+        <PopoverBody className="p-0">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={onDateChange}
+            autoFocus
+          />
+        </PopoverBody>
       </PopoverContent>
     </Popover>
   )

@@ -212,6 +212,37 @@ const Component = () => {
 
 ## CSS / Tailwind Conventions
 
+### Surface Composition
+
+Use one surface language for cards and larger overlays:
+
+- `bg-background` is the recessed content plane.
+- `bg-card` is Card chrome; `bg-popover` is overlay chrome.
+- Free-floating chrome shells use `rounded-2xl p-2`.
+- Inset content uses `rounded-lg bg-background` and matches its component's chrome padding.
+- Inset content uses `ring-1 ring-foreground/10` for crisp separation.
+- The radii are concentric: `18px` outer radius = `10px` inner radius + `8px` shell padding.
+- Multiple content regions are sibling inset surfaces separated by the shell's `gap-1`.
+
+```tsx
+<Card>
+  <CardHeader>
+    <CardTitle>Workspace</CardTitle>
+    <CardDescription>Manage workspace settings.</CardDescription>
+  </CardHeader>
+  <CardContent>General settings</CardContent>
+  <CardContent>Notification settings</CardContent>
+  <CardFooter>Actions</CardFooter>
+</Card>
+```
+
+Use `DialogBody`, `SheetBody`, and `PopoverBody` for the same inset treatment in
+larger overlays. Header and footer regions remain on their component's chrome
+surface. Compact menus, selects, tabs, alerts, empty states, and list items are
+single-purpose controls or states; do not force the shell/body pattern onto
+them. Keep each component's established density: Card uses `--card-spacing`,
+Dialog and Sheet use `p-3`, and Popover uses `p-2.5`.
+
 ### Use `cn()` Utility
 
 ```tsx

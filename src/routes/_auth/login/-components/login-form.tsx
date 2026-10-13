@@ -35,7 +35,7 @@ export const LoginForm = () => {
     validators: {
       onSubmit: signInBodySchema,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: ({ value }) => {
       loginMutation.mutate(value, {
         onSuccess: () => navigate({ to: '/dashboard', replace: true }),
       })

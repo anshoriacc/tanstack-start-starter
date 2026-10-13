@@ -147,7 +147,7 @@ function DashboardPage() {
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-sm font-medium">
               Total Employees
             </CardTitle>
@@ -159,7 +159,7 @@ function DashboardPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-sm font-medium">Departments</CardTitle>
             <IconBuilding className="text-muted-foreground size-4" />
           </CardHeader>
@@ -169,7 +169,7 @@ function DashboardPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-sm font-medium">On Leave</CardTitle>
             <IconCalendar className="text-muted-foreground size-4" />
           </CardHeader>
@@ -179,7 +179,7 @@ function DashboardPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-sm font-medium">
               Retention Rate
             </CardTitle>
@@ -204,9 +204,9 @@ function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <pre className="bg-muted text-muted-foreground max-h-100 w-full overflow-x-auto rounded-lg p-4 text-xs">
-              {JSON.stringify(sessionQuery.data, null, 2)}
-            </pre>
+            <div className="text-muted-foreground scroll-fade max-h-100 w-full overflow-x-auto rounded-lg text-xs">
+              <pre>{JSON.stringify(sessionQuery.data, null, 2)}</pre>
+            </div>
           </CardContent>
         </Card>
 
@@ -216,9 +216,9 @@ function DashboardPage() {
             <CardDescription>Authenticated user details</CardDescription>
           </CardHeader>
           <CardContent>
-            <pre className="bg-muted text-muted-foreground max-h-100 w-full overflow-x-auto rounded-lg p-4 text-xs">
-              {JSON.stringify(currentUserQuery.data, null, 2)}
-            </pre>
+            <div className="text-muted-foreground scroll-fade max-h-100 w-full overflow-x-auto rounded-lg text-xs">
+              <pre>{JSON.stringify(currentUserQuery.data, null, 2)}</pre>
+            </div>
           </CardContent>
         </Card>
       </div>

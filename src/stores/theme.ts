@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 
 import {
-  type TTheme,
   type TResolvedTheme,
+  type TTheme,
   setThemeServerFn,
 } from '@/server/theme'
 import { useLoaderTheme } from '@/lib/theme-context'

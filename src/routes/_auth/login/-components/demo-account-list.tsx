@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Skeleton } from '@/components/ui/skeleton'
 import {
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -46,7 +47,7 @@ export const DemoAccountList = ({ onSelect }: Props) => {
             Select an account to auto-fill credentials
           </DialogDescription>
         </DialogHeader>
-        <div role="list" aria-label="Available demo accounts">
+        <DialogBody role="list" aria-label="Available demo accounts">
           {isLoading ? (
             <div className="space-y-2">
               <Skeleton className="h-12 w-full" />
@@ -57,6 +58,7 @@ export const DemoAccountList = ({ onSelect }: Props) => {
               {usersData?.users.map((user) => (
                 <DialogClose
                   key={user.id}
+                  nativeButton={false}
                   render={
                     <Item
                       variant="muted"
@@ -87,7 +89,7 @@ export const DemoAccountList = ({ onSelect }: Props) => {
               ))}
             </div>
           )}
-        </div>
+        </DialogBody>
       </DialogContent>
     </Dialog>
   )

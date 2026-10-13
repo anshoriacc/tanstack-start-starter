@@ -1,13 +1,8 @@
-import { clsx } from 'clsx'
+import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import type { ClassValue } from 'clsx'
 
 export function cn(...inputs: Array<ClassValue>) {
   return twMerge(clsx(inputs))
-}
-
-export function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 export function getInitials(name?: string, limit: number = 2): string {

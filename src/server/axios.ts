@@ -24,11 +24,11 @@ export class ApiError extends Error {
 function throwApiError(error: unknown): never {
   if (axios.isAxiosError(error) && error.response) {
     const body = error.response.data as Record<string, unknown> | undefined
-    throw new ApiError(
-      error.response.status,
-      (body?.message as string) ?? error.message,
-      body?.errors as Array<unknown> | undefined,
-    )
+    const message =
+      typeof body?.message === 'string' ? body.message : error.message
+    const errors = Array.isArray(body?.errors) ? body.errors : undefined
+
+    throw new ApiError(error.response.status, message, errors)
   }
   throw error
 }
@@ -40,8 +40,7 @@ async function getAccessToken(): Promise<string | null> {
     const session = await auth.api.getSession({ headers })
     if (!session?.session) return null
     return (session.session as Record<string, unknown>).accessToken as
-      | string
-      | null
+      string | null
   } catch {
     return null
   }
@@ -57,8 +56,7 @@ async function refreshAndGetToken(): Promise<string | null> {
     const session = await auth.api.getSession({ headers })
     if (!session?.session) return null
     return (session.session as Record<string, unknown>).accessToken as
-      | string
-      | null
+      string | null
   } catch {
     return null
   }
@@ -74,7 +72,7 @@ const requestSchema = z.object({
 
 // Server-side request handler
 const serverRequest = createServerFn({ method: 'POST' })
-  .inputValidator(requestSchema)
+  .validator(requestSchema)
   .handler(async ({ data: input }) => {
     const token = await getAccessToken()
 

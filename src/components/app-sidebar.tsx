@@ -10,7 +10,7 @@ import {
   IconSettings,
   IconUsers,
 } from '@tabler/icons-react'
-import { Link } from '@tanstack/react-router'
+import { Link, useLocation } from '@tanstack/react-router'
 
 import { cn } from '@/lib/utils'
 import { ToggleTheme } from './toggle-theme'
@@ -60,6 +60,14 @@ const navs = [
         url: '#',
         icon: IconUsers,
         isActive: false,
+        items: [
+          {
+            title: 'Departments',
+            url: '#',
+            icon: IconBuilding,
+            isActive: false,
+          },
+        ],
       },
       {
         title: 'Departments',
@@ -120,10 +128,15 @@ export const AppSidebar = ({
   className,
   ...props
 }: AppSidebarProps) => {
+  const { pathname } = useLocation()
+
+  const isItemActive = (url: string) =>
+    url !== '#' && (pathname === url || pathname.startsWith(`${url}/`))
+
   return (
     <Sidebar
       className={cn(
-        'top-(--header-height) h-[calc(100svh-var(--header-height))]! data-[hover-preview-open=true]:!left-0',
+        'top-(--header-height) h-[calc(100svh-var(--header-height))]! data-[hover-preview-open=true]:left-0!',
         className,
       )}
       data-hover-preview-open={isHoverPreviewOpen || undefined}
@@ -158,18 +171,16 @@ export const AppSidebar = ({
               <CollapsibleContent>
                 <SidebarGroupContent>
                   <SidebarMenu>
-                    {item.items.map((item) => (
-                      <SidebarMenuItem key={item.title}>
+                    {item.items.map((subItem) => (
+                      <SidebarMenuItem key={subItem.title}>
                         <SidebarMenuButton
                           render={
-                            <Link to={item.url}>
-                              {item.icon && (
-                                <item.icon className="mr-2 size-4" />
-                              )}
-                              {item.title}
+                            <Link to={subItem.url}>
+                              <subItem.icon className="mr-2 size-4" />
+                              {subItem.title}
                             </Link>
                           }
-                          isActive={item.isActive}
+                          isActive={isItemActive(subItem.url)}
                         ></SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}

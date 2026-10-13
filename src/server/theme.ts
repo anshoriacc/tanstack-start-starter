@@ -13,14 +13,14 @@ export type TResolvedTheme = 'light' | 'dark'
 const THEME_COOKIE = '_preferred-theme'
 const DEFAULT_THEME: TTheme = 'system'
 
-export const getThemeServerFn = createServerFn().handler(async () => {
+export const getThemeServerFn = createServerFn().handler(() => {
   const theme = (getCookie(THEME_COOKIE) || DEFAULT_THEME) as TTheme
   return theme
 })
 
 export const setThemeServerFn = createServerFn({ method: 'POST' })
-  .inputValidator(themeValidator)
-  .handler(async ({ data }) => {
+  .validator(themeValidator)
+  .handler(({ data }) => {
     setCookie(THEME_COOKIE, data)
     return data
   })

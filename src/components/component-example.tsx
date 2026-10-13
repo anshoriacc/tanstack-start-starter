@@ -106,6 +106,7 @@ import {
 } from '@/components/ui/combobox'
 import {
   Dialog,
+  DialogBody,
   DialogClose,
   DialogContent,
   DialogDescription,
@@ -148,6 +149,7 @@ import {
 } from '@/components/ui/pagination'
 import {
   Popover,
+  PopoverBody,
   PopoverContent,
   PopoverDescription,
   PopoverHeader,
@@ -164,6 +166,7 @@ import {
 } from '@/components/ui/select'
 import {
   Sheet,
+  SheetBody,
   SheetClose,
   SheetContent,
   SheetDescription,
@@ -240,8 +243,8 @@ const UserProfileExample = () => {
           <Avatar size="lg">
             <AvatarImage src={user?.image} />
             <AvatarFallback>
-              {user?.firstName?.[0]}
-              {user?.lastName?.[0]}
+              {user?.firstName[0]}
+              {user?.lastName[0]}
             </AvatarFallback>
           </Avatar>
           <div>
@@ -414,7 +417,7 @@ const CardExample = () => {
               <CardTitle>John Davidson</CardTitle>
               <CardDescription>Senior Software Engineer</CardDescription>
               <div className="mt-2 flex gap-2">
-                <Badge variant="secondary">Engineering</Badge>
+                <Badge variant="outline">Engineering</Badge>
                 <Badge variant="outline">Full-time</Badge>
               </div>
             </div>
@@ -469,6 +472,10 @@ const CardExample = () => {
               <p className="text-muted-foreground">Start Date</p>
               <p className="font-medium">March 15, 2022</p>
             </div>
+          </div>
+        </CardContent>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <p className="text-muted-foreground">Manager</p>
               <p className="font-medium">Sarah Chen</p>
@@ -855,7 +862,7 @@ const TableExample = () => {
   return (
     <ExampleCard title="Table">
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <InputGroup className="w-64">
             <InputGroupAddon>
               <IconSearch className="text-muted-foreground size-4" />
@@ -955,7 +962,7 @@ const DialogSheetExample = () => {
                 Review and manage employee benefits package
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-4">
+            <DialogBody className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-medium">Health Insurance</p>
@@ -985,7 +992,7 @@ const DialogSheetExample = () => {
                 </div>
                 <Badge variant="secondary">12 days remaining</Badge>
               </div>
-            </div>
+            </DialogBody>
             <DialogFooter>
               <DialogClose render={<Button variant="outline">Close</Button>} />
               <Button>Download Summary</Button>
@@ -1009,7 +1016,7 @@ const DialogSheetExample = () => {
                 Submit a leave request for approval
               </SheetDescription>
             </SheetHeader>
-            <div className="space-y-4 p-4">
+            <SheetBody className="flex flex-col gap-4 overflow-y-auto">
               <Field>
                 <FieldLabel>Leave Type</FieldLabel>
                 <Select defaultValue={null}>
@@ -1044,7 +1051,7 @@ const DialogSheetExample = () => {
                 <FieldLabel>Reason</FieldLabel>
                 <Textarea placeholder="Brief description..." />
               </Field>
-            </div>
+            </SheetBody>
             <SheetFooter>
               <SheetClose render={<Button variant="outline">Cancel</Button>} />
               <Button
@@ -1217,7 +1224,7 @@ const ToggleTooltipExample = () => {
                     Common tasks for this employee
                   </PopoverDescription>
                 </PopoverHeader>
-                <div className="grid gap-2">
+                <PopoverBody className="grid gap-2">
                   <Button variant="ghost" size="sm" className="justify-start">
                     <IconMail className="mr-2 size-4" />
                     Send Email
@@ -1230,7 +1237,7 @@ const ToggleTooltipExample = () => {
                     <IconFolder className="mr-2 size-4" />
                     View Documents
                   </Button>
-                </div>
+                </PopoverBody>
               </PopoverContent>
             </Popover>
           </div>
@@ -1295,7 +1302,7 @@ const ExampleCard = ({ title, children, className }: ExampleCardProps) => {
       <h3 className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
         {title}
       </h3>
-      <div className="bg-card text-card-foreground rounded-lg border p-4 shadow-sm">
+      <div className="bg-background text-card-foreground rounded-[calc(1rem+var(--radius)+8px)] border border-dashed p-4 shadow-sm">
         {children}
       </div>
     </div>

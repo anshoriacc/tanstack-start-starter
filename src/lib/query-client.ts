@@ -1,5 +1,5 @@
 import { ApiError } from '@/server/axios'
-import { AnyRouter } from '@tanstack/react-router'
+import { type AnyRouter } from '@tanstack/react-router'
 import {
   QueryCache,
   QueryClient,

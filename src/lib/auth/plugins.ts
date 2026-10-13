@@ -87,7 +87,7 @@ export const customCredentials = () => {
             )
           }
 
-          const expiresInMins = ctx.body.expiresInMins ?? 10
+          const expiresInMins = ctx.body.expiresInMins
 
           try {
             const { data } = await axiosApi.post<TRefreshTokenResponse>(

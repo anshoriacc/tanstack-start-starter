@@ -25,6 +25,7 @@ function HomePage() {
           </p>
           <Button
             variant="secondary"
+            nativeButton={false}
             render={
               <a
                 href="https://github.com/anshoriacc/tanstack-start-starter"

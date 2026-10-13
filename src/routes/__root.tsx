@@ -69,7 +69,7 @@ interface RootDocumentProps {
 
 function RootDocument({ children }: RootDocumentProps) {
   const loaderData = Route.useLoaderData()
-  const theme = loaderData?.theme ?? 'system'
+  const theme = loaderData.theme
   const resolvedTheme = useResolvedTheme()
 
   return (

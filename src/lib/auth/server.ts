@@ -26,9 +26,8 @@ export const auth = betterAuth({
     },
   },
   plugins: [
-    tanstackStartCookies(),
     customCredentials(),
-    customSession(async ({ session, user }) => {
+    customSession(({ session, user }) => {
       const extendedSession = session as typeof session & {
         accessToken?: string
         refreshToken?: string
@@ -41,7 +40,7 @@ export const auth = betterAuth({
         image?: string
       }
 
-      return {
+      return Promise.resolve({
         session: {
           ...session,
           accessToken: extendedSession.accessToken,
@@ -55,7 +54,8 @@ export const auth = betterAuth({
           gender: extendedUser.gender,
           image: extendedUser.image,
         },
-      }
+      })
     }),
+    tanstackStartCookies(),
   ],
 })
